@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diagram from Form</title>
+    <link rel="stylesheet" href="css/diagram.css">
 </head>
 
 <body>
@@ -14,7 +15,15 @@
     </header>
     <main>
         <div id="statuspanel" class="statuspanel">
-
+            Loading. Please wait...
+        </div>
+        <div id="openbrancheditor" class="hidden">
+            <h2>Branch Options not selected</h2>
+            <p>Before invoking Forms Diagram, please open the Branch Options screen by:</p>
+            <ol>
+                <li>Clicking any question.</li>
+                <li>Selection "Add branching" from the ellipses menu.</li>
+            </ol>
         </div>
         <pre id="diagram" class="dynmermaid">
 
