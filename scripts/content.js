@@ -1,15 +1,15 @@
 (function () {
     "use strict";
 
-    // This will work only on the Branching Options page while
-    // editing a form in Microsoft Forms. Make sure you select
-    // the last question before you run this.
 
     const finalresult = {
         status: "Error",
         error: "",
         diagramText: ""
     }
+
+    // This will work only on the Branching Options page while
+    // editing a form in Microsoft Forms.
 
     const headingSpan = document.querySelector("span[role='heading']")
     if (!headingSpan) {
@@ -27,6 +27,8 @@
 
     // Questions are contained in elements which have the CSS class "office-form-question"
     const q = document.querySelectorAll(".office-form-question")
+
+    const qcount = q.length
 
     q.forEach(function processQuestions(i) {
         // The question text, type and requireness are all contained as a single string
@@ -54,6 +56,11 @@
         // We want the number to be shown in flowchart boxes
         fromText = `${fromNum}. ${fromText}`
 
+
+        // If a question is not currently selected for editing, it is contained
+        // in a <button> element with a role attribute with value 'button'.
+        const selectedforediting = !(i.getAttribute("role") == "button")
+
         // If a question can have multiple branches, the container element
         // will have a child div with a 'role' attribute with value 
         // 'radiogroup'. The branches will be organized below that. Each
@@ -61,9 +68,9 @@
         // '.text-format-content'.
         const branchgroup = i.querySelector('div[role="radiogroup"]')
         const firstbranchcondition = branchgroup ?
-                                        branchgroup.querySelector("div[role='radio'] span.text-format-content") :
-                                        undefined
-        
+            branchgroup.querySelector("div[role='radio'] span.text-format-content") :
+            undefined
+
 
         // If a question has just one branch, the destination question text
         // can be found in an element with the class '.dropdown-placeholder-text'
@@ -72,9 +79,25 @@
         const gotoElement = i.querySelector(".dropdown-placeholder-text")
 
         // A 'ratings' type question also has a div with the 'radiogroup' role.
-        // It doesn't have branch identification values under it. So, a 
-        // question has mutiple branches only if it is not a rating.
-        const multiplebranches  = (branchgroup && firstbranchcondition && (!gotoElement))
+        // It doesn't have branch identification values under it. And finally,
+        // if a multi-branch question is selected for editing, the branch
+        // destinations are found in spans with the class 
+        // .dropdown-placeholder-text, which is the same marker as one-branch
+        // questions. So, a question has mutiple branches only if:
+        // 1. The 'radiogroup' role exists, AND... 
+        // 2. EITHER
+        //      a) span.text-format-content can be detected AND 
+        //      b) .dropdown-placeholder-text cannot
+        // 3. OR
+        //      a) question is currently selected for editing AND
+        //      b) .dropdown-placeholder-text can be detected
+        const multiplebranches = (
+            branchgroup &&
+            (
+                (firstbranchcondition && (!gotoElement)) ||
+                (selectedforediting && gotoElement)
+            )
+        )
 
         if (multiplebranches) {
             // The question has multiple branches
@@ -82,7 +105,7 @@
             // having value 'radio'
             const choices = branchgroup.querySelectorAll("div[role='radio']")
 
-            
+
 
             choices.forEach(function processChoices(choice) {
                 // A span with the class '.text-format-content' will have the
@@ -91,47 +114,37 @@
 
                 let toNum = ""
 
-                // The destination question string is contained in a structure like
-                // this inside the destination element:
-                // <div></div>
-                // <div>
-                //    <div>
-                //       <div></div>
-                //       <div>DESTINATION QUESTION HERE</div>
-                //    </div>
-                // </div>
-                const gotoElement = choice.children[1]?.children[0]?.children[1]
+                let gotoElement = undefined
 
-                if (gotoElement) {
-                    const gotoValue = gotoElement.innerText
-                    if (gotoValue == "Next") {
-                        toNum = (parseInt(fromNum) + 1).toString()
-                    } else if (gotoValue == "End of the form") {
-                        toNum = "End"
-                    } else {
-                        toNum = gotoValue.match(qnumregexp)[1]
-                    }
+                if (selectedforediting) {
+                    // If the question is current selected for editing, it is contained
+                    // in a <div> tag. In this case, each choice's destination
+                    // question string is available in a span with the class
+                    // .dropdown-placeholder-text inside the choice element.
+                    gotoElement = choice.querySelector("span.dropdown-placeholder-text")
                 } else {
-                    toNum = (parseInt(fromNum) + 1).toString()
+                    // If a question is not currently selected for editing, it is contained
+                    // in a <button> element with a role attribute with value 'button'.
+                    // If this case,
+                    // the destination question string is contained in a structure like
+                    // this inside the choice element:
+                    // <div></div>
+                    // <div>
+                    //    <div>
+                    //       <div></div>
+                    //       <div>DESTINATION QUESTION HERE</div>
+                    //    </div>
+                    // </div>
+                    gotoElement = choice.children[1]?.children[0]?.children[1]
                 }
+
+                toNum = getToNum(gotoElement, fromNum, qcount, qnumregexp)
 
                 result += `${fromNum}[${fromText}] -->|${ifValue}|${toNum}\n`
             })
         } else {
             // Question has just one branch
-            let toNum = ""
-
-            if (gotoElement) {
-                const gotoquestion = gotoElement.innerText
-
-                // The question text is in the format:
-                // <number>. <text> 
-                const qmatch = gotoquestion.match(qnumregexp)
-                toNum = qmatch ? qmatch[1] : "End"
-            } else {
-                // The destination is the next question
-                toNum = (parseInt(fromNum) + 1).toString()
-            }
+            let toNum = getToNum(gotoElement, fromNum, qcount, qnumregexp)
 
             result += `${fromNum}[${fromText}] --> ${toNum}\n`
         }
@@ -145,4 +158,26 @@
     finalresult.diagramText = result
     return finalresult
 
+
+    function getNextNum(fromNum, qcount) {
+        const toNum = parseInt(fromNum) + 1
+        return toNum > qcount ? "End" : toNum.toString()
+    }
+
+    function getToNum(gotoElement, fromNum, qcount, qnumregexp) {
+        let toNum = ""
+        if (gotoElement) {
+            const gotoValue = gotoElement.innerText
+            if (gotoValue == "Next") {
+                toNum = getNextNum(fromNum, qcount)
+            } else if (gotoValue == "End of the form") {
+                toNum = "End";
+            } else {
+                toNum = gotoValue.match(qnumregexp)[1];
+            }
+        } else {
+            toNum = getNextNum(fromNum, qcount)
+        }
+        return toNum
+    }
 })()
