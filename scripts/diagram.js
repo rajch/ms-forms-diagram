@@ -30,42 +30,63 @@ function savebuttonClicked(e) {
     const svgdataUrl = "data:image/svg+xml;base64," +
         btoa(diagramsvg.outerHTML)
 
-    // Then, create a new image object, set up a load handler to
-    // process it, and point it to the data url
-    const img = new Image();
-    img.addEventListener('load', () => {
-        // Create an ad-hoc canvas, same size as the SVG
-        const bbox = diagramsvg.getBBox()
+    console.log(`SIZE OF DATAURL:${svgdataUrl.length}`)
 
-        const canvas = document.createElement('canvas')
-        canvas.width = bbox.width
-        canvas.height = bbox.height
+    // Chrome silently fails if the data url size goes beyond some
+    // limit. The number 45000 is guesswork, based on tests.
+    if (svgdataUrl.length <= 45000) {
+        // Then, create a new image object, set up a load handler to
+        // process it, and point it to the data url
+        const img = new Image();
+        img.addEventListener('load', () => {
+            // Create an ad-hoc canvas, same size as the SVG
+            const bbox = diagramsvg.getBBox()
 
-        const context = canvas.getContext('2d')
+            const canvas = document.createElement('canvas')
+            canvas.width = bbox.width
+            canvas.height = bbox.height
 
-        // Solid white background for non-transparent PNG
-        context.fillStyle = "white";
-        context.fillRect(0, 0, canvas.width, canvas.height);
+            const context = canvas.getContext('2d')
 
-        // Draw the image on the canvas
-        context.drawImage(img, 0, 0, bbox.width, bbox.height)
+            // Solid white background for non-transparent PNG
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Create a temporary link, configure it for download,
-        // point it to the canvas-generated data url, and 
-        // 'click' it to trigger a download.
-        const a = document.createElement('a')
-        const diagramtitle = document.getElementById("diagramtitle")
-        const downloadFileName = diagramtitle ?
-            `${diagramtitle.innerText}.png` :
-            'image.png'
-        a.download = downloadFileName
-        document.body.appendChild(a)
-        a.href = canvas.toDataURL()
-        a.click()
-        a.remove()
-    })
+            // Draw the image on the canvas
+            context.drawImage(img, 0, 0, bbox.width, bbox.height)
 
-    img.src = svgdataUrl;
+            // Create a temporary link, configure it for download,
+            // point it to the canvas-generated data url, and 
+            // 'click' it to trigger a download.
+            const a = document.createElement('a')
+            const diagramtitle = document.getElementById("diagramtitle")
+            const downloadFileName = diagramtitle ?
+                `${diagramtitle.innerText}.png` :
+                'image.png'
+            a.download = downloadFileName
+            document.body.appendChild(a)
+            a.href = canvas.toDataURL()
+            a.click()
+            a.remove()
+        })
+
+        img.src = svgdataUrl;
+    } else {
+        // Otherwise, render the svg to a blob, get an object URL, and
+        // set a fallback img tag's source to that, remembering to 
+        // revoke the blob URL once the image is loaded.
+        const svgdata = (new XMLSerializer()).serializeToString(diagramsvg);
+        const blob = new Blob([svgdata], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const image = document.getElementById('fallbackimage');
+        image.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+        image.src = url;
+        e.target.classList.toggle('hidden')
+        const diagram = document.getElementById('diagram')
+        diagram.classList.toggle('hidden')
+        const downloadfallbackpanel = document.getElementById('downloadfallbackpanel')
+        downloadfallbackpanel.classList.toggle('hidden')
+    }
 }
 
 function chromeMessageReceived(request, sender) {
