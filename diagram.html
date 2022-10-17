@@ -11,28 +11,29 @@
 
 <body>
     <header>
-        <h1 id="diagramtitle">Diagram</h1>
+        <h1 id="diagramtitle">Diagram loading...</h1>
+        <div id="savepanel" class="hidden">
+            <div id="savebutton">Save as PNG</div>
+        </div>
     </header>
     <main>
-        <div id="statuspanel" class="statuspanel">
-            Loading. Please wait...
+        <div id="statuspanel" class="statuspanel ">
+            <p>Loading. Please wait...</p>
+            <p class="animate">Do not refresh this page. Instead, go back to the form page and click the extension again.</p>
         </div>
         <div id="openbrancheditor" class="hidden">
             <h2>Branch Options not selected</h2>
             <p>Before invoking Forms Diagram, please open the Branch Options screen by:</p>
             <ol>
-                <li>Clicking any question.</li>
+                <li>Clicking <em>any</em> question.</li>
                 <li>Selecting "Add branching" from the ellipses menu.</li>
             </ol>
-        </div>
-        <div id="savepanel" class="hidden">
-            <button id="savebutton">Save as Image</button>
         </div>
         <pre id="diagram" class="dynmermaid">
 
         </pre>
     </main>
-    
+
     <script src="scripts/mermaid.min.js"></script>
     <script src="scripts/diagram.js"></script>
 </body>

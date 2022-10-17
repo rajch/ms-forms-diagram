@@ -42,7 +42,7 @@ function savebuttonClicked(e) {
         canvas.height = bbox.height
 
         const context = canvas.getContext('2d')
-        
+
         // Solid white background for non-transparent PNG
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -74,12 +74,17 @@ function chromeMessageReceived(request, sender) {
         "from the extension:" + JSON.stringify(request));
 
     if (!request.status) {
-        setElementText("statuspanel", "Error: Wrong message sent.")
+        setElementText("diagramtitle", "Error")
+        setElementText(
+            "statuspanel",
+            "Error: Wrong message sent. Please contact the developers."
+        )
         return
     }
 
     if (request.status == "Error") {
-        setElementText("statuspanel", "Error:" + request.error)
+        setElementText("diagramtitle", "Error")
+        setElementText("statuspanel", "Error: " + request.error)
         showopenbrancheditorpanel()
         return
     }
