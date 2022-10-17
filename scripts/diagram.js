@@ -34,7 +34,7 @@ function savebuttonClicked(e) {
     // process it, and point it to the data url
     const img = new Image();
     img.addEventListener('load', () => {
-        // draw the image on an ad-hoc canvas
+        // Create an ad-hoc canvas, same size as the SVG
         const bbox = diagramsvg.getBBox()
 
         const canvas = document.createElement('canvas')
@@ -42,6 +42,12 @@ function savebuttonClicked(e) {
         canvas.height = bbox.height
 
         const context = canvas.getContext('2d')
+        
+        // Solid white background for non-transparent PNG
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the image on the canvas
         context.drawImage(img, 0, 0, bbox.width, bbox.height)
 
         // Create a temporary link, configure it for download,
@@ -50,8 +56,8 @@ function savebuttonClicked(e) {
         const a = document.createElement('a')
         const diagramtitle = document.getElementById("diagramtitle")
         const downloadFileName = diagramtitle ?
-                                    `${diagramtitle.innerText}.png` :
-                                    'image.png'               
+            `${diagramtitle.innerText}.png` :
+            'image.png'
         a.download = downloadFileName
         document.body.appendChild(a)
         a.href = canvas.toDataURL()
@@ -83,7 +89,7 @@ function chromeMessageReceived(request, sender) {
         setElementText("diagramtitle", request.diagramTitle)
         setElementText("diagram", request.diagramText)
 
-        mermaid.init(undefined, ".dynmermaid");
+        mermaid.init(undefined, ".dynmermaid")
 
         showsavepanel()
     }
