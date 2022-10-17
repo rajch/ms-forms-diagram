@@ -48,7 +48,11 @@ function savebuttonClicked(e) {
         // point it to the canvas-generated data url, and 
         // 'click' it to trigger a download.
         const a = document.createElement('a')
-        a.download = 'image.png'
+        const diagramtitle = document.getElementById("diagramtitle")
+        const downloadFileName = diagramtitle ?
+                                    `${diagramtitle.innerText}.png` :
+                                    'image.png'               
+        a.download = downloadFileName
         document.body.appendChild(a)
         a.href = canvas.toDataURL()
         a.click()
@@ -76,6 +80,7 @@ function chromeMessageReceived(request, sender) {
 
     if (request.status == "Success") {
         setElementText("statuspanel", "")
+        setElementText("diagramtitle", request.diagramTitle)
         setElementText("diagram", request.diagramText)
 
         mermaid.init(undefined, ".dynmermaid");

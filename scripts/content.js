@@ -5,6 +5,7 @@
     const finalresult = {
         status: "Error",
         error: "",
+        diagramTitle: "",
         diagramText: ""
     }
 
@@ -23,7 +24,7 @@
     }
 
     // Begin a mermaid flowchart
-    let result = "graph TD\nStart --> 1\n"
+    let result = "graph TD\nStart([Start])\nEnd([End])\nStart --> 1\n"
 
     // Questions are contained in elements which have the CSS class "office-form-question"
     const q = document.querySelectorAll(".office-form-question")
@@ -155,6 +156,7 @@
     console.log("LOGGING FROM content.js:\n" + result)
 
     finalresult.status = "Success"
+    finalresult.diagramTitle = document.title
     finalresult.diagramText = result
     return finalresult
 
