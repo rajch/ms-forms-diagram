@@ -8,48 +8,104 @@
     // This regexp matches both
     const qnumregexp = /^(\d{1,5})\.(.*)$/;
 
-    function createQuestion(questionElement, sectionObject) {
-        // The question text, type and requireness are all contained as a single string
-        // in an attribute called "aria-label" of the question element. 
-        const question = questionElement.getAttribute("aria-label");
+    function createChoice(choiceElement, questionObject) {
+        // A span with the class '.text-format-content' will have the
+        // choice value for the current destination
+        const ifValue =
+            choiceElement.querySelector(
+                'span.text-format-content'
+            ).innerText
 
-        const fromNum = question.match(qnumregexp)[1];
+        let choicegotoElement = undefined;
+
+        if (questionObject.selectedForEditing()) {
+            // If the question is current selected for editing, it is
+            // contained in a <div> tag. In this case, each choice's
+            // destination string is available in a span with the class
+            // .dropdown-placeholder-text inside the choice element.
+            choicegotoElement =
+                choiceElement.querySelector('span.dropdown-placeholder-text')
+        } else {
+            // If a question is not currently selected for editing, it is
+            // contained in a <button> element with a role attribute with
+            // value 'button'. In this case, the destination string is
+            // available in a structure like this inside the choice
+            // element:
+            // <div></div>
+            // <div>
+            //    <div>
+            //       <div></div>
+            //       <div>DESTINATION QUESTION HERE</div>
+            //    </div>
+            // </div>
+            choicegotoElement = choiceElement.children[1]?.children[0]?.children[1];
+        }
+
+        const destinationstring = choicegotoElement ?
+            choicegotoElement.innerText :
+            ''
+
+        return {
+            ifValue() {
+                return ifValue
+            },
+            destionationString() {
+                return destinationstring
+            }
+        }
+    }
+
+    function createQuestion(questionElement, sectionObject) {
+        // The question text, type and requireness are all contained 
+        // as a single string in the "aria-label" attribute of the
+        // question element. 
+        const title = questionElement.getAttribute('aria-label')
+
+        const id = title.match(qnumregexp)[1]
 
         // Just the question text can be found in a span element with 
         // the class .text-format-content, which is inside a div which
         // has a 'data-automation-id' attribute with the value
         // 'questionTitle', which is under the question container 
         // element.
-        const titlespan = questionElement.querySelector("div[data-automation-id='questionTitle'] span.text-format-content");
-        let fromText = titlespan ? titlespan.innerText : "NO TITLE";
+        const titletextspan = questionElement.querySelector(
+            'div[data-automation-id="questionTitle"] span.text-format-content'
+        )
+        let titletext = titletextspan ? titletextspan.innerText : "NO TITLE";
 
         // Mermaid cannot handle parenthesis, semicolons or angle brackets
         // in text
-        fromText = fromText.replace(/[\(\/\);<>:]/g, '');
+        titletext = titletext.replace(/[\(\/\);<>:]/g, '');
 
         // We want the number to be shown in flowchart boxes
-        fromText = `${fromNum}. ${fromText}`;
+        titletext = `${id}. ${titletext}`;
 
 
-        // If a question is not currently selected for editing, it is contained
-        // in a <button> element with a role attribute with value 'button'.
-        const selectedforediting = !(questionElement.getAttribute("role") == "button");
+        // If a question is not currently selected for editing, the element
+        // is a <button> with a role attribute with value 'button'.
+        // Otherwise, it is a <div> without that attribute.
+        const selectedforediting =
+            (questionElement.getAttribute('role') !== 'button')
 
         // If a question can have multiple branches, the container element
         // will have a child div with a 'role' attribute with value 
         // 'radiogroup'. The branches will be organized below that. Each
         // branch is identified by a value in a span which has the class
         // '.text-format-content'.
-        const branchgroup = questionElement.querySelector('div[role="radiogroup"]');
+        const branchgroup = questionElement.querySelector(
+            'div[role="radiogroup"]'
+        )
         const firstbranchcondition = branchgroup ?
             branchgroup.querySelector("div[role='radio'] span.text-format-content") :
-            undefined;
+            undefined
 
         // If a question has just one branch, the destination question text
         // can be found in an element with the class '.dropdown-placeholder-text'
         // This element will not exist if the destination question is the 
         // next one in order
-        const gotoElement = questionElement.querySelector(".dropdown-placeholder-text");
+        const gotoElement = questionElement.querySelector(
+            ".dropdown-placeholder-text"
+        )
 
         // A 'ratings' type question also has a div with the 'radiogroup' role.
         // It doesn't have branch identification values under it. And finally,
@@ -70,18 +126,22 @@
                 (firstbranchcondition && (!gotoElement)) ||
                 (selectedforediting && gotoElement)
             )
-        );
+        )
 
-        return {
-            element: questionElement,
+        const destination = gotoElement && !multiplebranches ?
+            gotoElement.innerText :
+            ''
+
+        const questionObject = {
+            choices: [],
             id() {
-                return fromNum
+                return id
             },
             titleText() {
-                return fromText
+                return titletext
             },
             title() {
-                return `${this.id()}. ${this.titleText()}`
+                return `${id}. ${titletext}`
             },
             selectedForEditing() {
                 return selectedforediting
@@ -89,21 +149,34 @@
             multipleBranches() {
                 return multiplebranches
             },
-            branchGroup() {
-                return branchgroup
-            },
-            singleGotoElement() {
-                return gotoElement
+            destionationString() {
+                return destination
             },
             section() {
                 return sectionObject
             },
             isLastInSection() {
                 return sectionObject ?
-                    this.id() == sectionObject.lastQuestionId() :
+                    id == sectionObject.lastQuestionId() :
                     false
             }
         }
+
+        // If the question has multiple branches
+        // Each choice is contained in a div with the 'role' attribute
+        // having value 'radio' under the questiom element
+        if (multiplebranches) {
+            const choiceElements =
+                branchgroup.querySelectorAll("div[role='radio']")
+
+            for (let i = 0, l = choiceElements.length; i < l; i++) {
+                questionObject.choices.push(
+                    createChoice(choiceElements[i], questionObject)
+                )
+            }
+        }
+
+        return questionObject
     }
 
     function createSection(sectionOrdinal, sectionMarkerElement) {
@@ -129,11 +202,12 @@
         const destinationSpan = secContainer.querySelector(
             ':scope >div:last-child span.dropdown-placeholder-text'
         )
-        const destination = destinationSpan ? destinationSpan.innerText : "Next"
+        const destination = destinationSpan ?
+            destinationSpan.innerText :
+            "Next"
+        const titletext = secLabel.getAttribute('aria-label')
 
         const section = {
-            label: secLabel,
-            container: secContainer,
             questions: [],
             ordinal() {
                 return sectionOrdinal
@@ -142,12 +216,14 @@
                 return `Section${this.ordinal()}`
             },
             titleText() {
-                return this.label.getAttribute('aria-label')
+                return titletext
             },
             title() {
-                let titletext = this.titleText() == "Section title" ?
-                    "" : this.titleText()
-                return `${this.ordinal()}. ${titletext}`.trimEnd()
+                let titleValue = titletext == 'Section title' ?
+                    '' :
+                    titletext
+
+                return `${sectionOrdinal}. ${titleValue}`.trimEnd()
             },
             firstQuestionId() {
                 if (this.questions && this.questions.length) {
@@ -164,26 +240,28 @@
                     return ""
                 }
             },
-            sectionDestination() {
+            destionationString() {
                 return destination
             }
         }
 
-        const childQuestionElements = section.container.querySelectorAll(
+        const questionElements = section.container.querySelectorAll(
             ".office-form-question"
         )
-        if (childQuestionElements) {
-            childQuestionElements.forEach((q) => {
-                const childQuestion = createQuestion(q, section)
+        if (questionElements) {
+            for (let i = 0, l = questionElements.length; i < l; i++) {
+                const childQuestion = createQuestion(
+                    questionElements[i], section
+                )
                 section.questions.push(childQuestion)
-            })
+            }
         }
 
         return section
     }
 
     function createForm() {
-        let sections = []
+        let sections = undefined
         let questions = undefined
         let qcount = 0
         let scount = 0
@@ -192,10 +270,10 @@
         // elements.
         // The most reliable marker is data-automation-id="SectionTitle"
         const sectionElements = document.querySelectorAll('[data-automation-id="SectionTitle"]')
-        console.log("Sections:", sectionElements)
 
         const hassections = (sectionElements && sectionElements.length)
         if (hassections) {
+            sections = []
             for (let i = 0; i < sectionElements.length; i++) {
                 let sec = createSection(i + 1, sectionElements[i])
                 sections.push(sec)
@@ -205,41 +283,22 @@
         } else {
             questions = []
             const questionElements = document.querySelectorAll(".office-form-question")
-            questionElements.forEach((q) => {
-                questions.push(createQuestion(q, undefined))
-            })
+            for (let i = 0; i < questionElements.length; i++) {
+                questions.push(
+                    createQuestion(questionElements[i], undefined)
+                )
+            }
             qcount = questions.length
         }
 
         return {
-            hasSections() {
-                return hassections
-            },
-            sections() {
-                return sections
-            },
-            questions() {
-                return questions
-            },
-            qCount() {
-                return qcount
-            },
-            sCount() {
-                return scount
-            },
             getSectionId(sectionTitle) {
                 let result = ""
                 if (scount) {
-                    for (let i = 0; i < scount; i++) {
-                        let sec = sections[i]
-
-                        if (sectionTitle == sec.title()) {
-                            result = sec.id()
-                            break;
-                        }
-                    }
+                    let sec = sections.find((s) => sectionTitle == s.title())
+                    result = sec ? sec.id() : ""
                 }
-                return result      
+                return result
             },
             getSectionDestination(question) {
                 if (!question.section()) {
@@ -250,7 +309,7 @@
                 const secdest = sec.sectionDestination()
                 if (secdest == "Next") {
                     const destsecordinal = sec.ordinal() + 1
-                    if (destsecordinal > this.sCount()) {
+                    if (destsecordinal > scount) {
                         return "End"
                     } else {
                         return `Section${destsecordinal}`
@@ -265,92 +324,76 @@
             },
             getNextDestination(question) {
                 if (question.isLastInSection()) {
-                    console.log(`QUESTION ${question.title()} is the last in its section`)
                     return this.getSectionDestination(question)
                 } else {
-                    console.log(`QUESTION ${question.title()} is NOT the last in its section`)
                     return this.getNextQuestion(question)
                 }
             },
-            getDestination(gotoElement, question) {
-                let dest = ""
-
-                if (gotoElement) {
-                    const gotoValue = gotoElement.innerText
-                    if (gotoValue == "Next") {
-                        dest = this.getNextDestination(question)
-                    } else if (gotoValue == "End of the form") {
-                        dest = "End";
-                    } else {
-                        //const toSection = getToSection(gotoValue, this.sections())
-                        const toSection = this.getSectionId(gotoValue)
-                        if (toSection) {
-                            dest = toSection
-                        } else {
-                            dest = gotoValue.match(qnumregexp)[1];
-                        }
-                    }
-                } else {
-                    // Implied next
-                    dest = this.getNextDestination(question)
+            getDestinationId(gotoValue, question) {
+                // Empty gotoValue implies next
+                if (!gotoValue) {
+                    return this.getNextDestination(question)
                 }
-                return dest
+
+                if (gotoValue == 'Next') {
+                    return this.getNextDestination(question)
+                }
+
+                if (gotoValue == 'End of the form') {
+                    return "End"
+                }
+
+                // gotoValue is a title. Could be section or
+                // question. Check section first.
+                const toSection = this.getSectionId(gotoValue)
+                if (toSection) {
+                    return toSection
+                }
+
+                // Now it must be a question title. Extract id
+                return gotoValue.match(qnumregexp)[1];
             },
-            processQuestion(questionObject) {
+            processQuestion(question) {
                 const thisForm = this
 
                 let result = ""
-                const sections = this.sections()
 
-                const fromNum = questionObject.id()
-                const fromText = questionObject.titleText()
+                const qId = question.id()
+                const qTitle = question.titleText()
 
-                if (questionObject.multipleBranches()) {
-                    // The question has multiple branches
-                    // Each destination is contained in a div with the 'role' attribute
-                    // having value 'radio'
-                    const choices = questionObject.branchGroup().querySelectorAll("div[role='radio']")
+                if (question.multipleBranches()) {
+                    result += `${qId}[${qTitle}]\n`
+
+                    const choices = question.choices
 
                     choices.forEach(function processChoices(choice) {
-                        // A span with the class '.text-format-content' will have the
-                        // choice value for the current destination
-                        const ifValue = choice.querySelector("span.text-format-content").innerText
+                        const ifValue = choice.ifValue()
+                        const destId = thisForm.getDestinationId(
+                            choice.destionationString(), question
+                        )
 
-                        let choicegotoElement = undefined;
-
-                        if (questionObject.selectedForEditing()) {
-                            // If the question is current selected for editing, it is contained
-                            // in a <div> tag. In this case, each choice's destination
-                            // question string is available in a span with the class
-                            // .dropdown-placeholder-text inside the choice element.
-                            choicegotoElement = choice.querySelector("span.dropdown-placeholder-text")
-                        } else {
-                            // If a question is not currently selected for editing, it is contained
-                            // in a <button> element with a role attribute with value 'button'.
-                            // If this case,
-                            // the destination question string is contained in a structure like
-                            // this inside the choice element:
-                            // <div></div>
-                            // <div>
-                            //    <div>
-                            //       <div></div>
-                            //       <div>DESTINATION QUESTION HERE</div>
-                            //    </div>
-                            // </div>
-                            choicegotoElement = choice.children[1]?.children[0]?.children[1];
-                        }
-
-                        const toNum = thisForm.getDestination(choicegotoElement, questionObject)
-
-                        result += `${fromNum}[${fromText}] -->|${ifValue}|${toNum}\n`;
+                        result += `${qId} -->|${ifValue}|${destId}\n`;
                     })
                 } else {
+                    const destId = thisForm.getDestinationId(
+                        question.destionationString(), question
+                    )
 
-                    // Question has just one branch
-                    const toNum = thisForm.getDestination(questionObject.singleGotoElement(), questionObject);
-
-                    result += `${fromNum}[${fromText}] --> ${toNum}\n`;
+                    result += `${qId}[${qTitle}] --> ${destId}\n`;
                 }
+
+                return result
+            },
+            processSection(section) {
+                let result = ""
+
+                const sec = section
+                result += `${sec.id()}\{\{${sec.titleText()}\}\}\n`
+                result += `${sec.id()} --> ${sec.firstQuestionId()}\n`
+
+                sec.questions.forEach((q) => {
+                    result += this.processQuestion(q)
+                })
 
                 return result
             },
@@ -359,26 +402,16 @@
                 let result = "graph TD\nStart([Start])\nEnd([End])\n"
 
                 // Check for sections
-                if (this.hasSections()) {
-                    const sections = this.sections()
-                    console.log("Sections:", sections)
-
+                if (hassections) {
                     result += "Start --> Section1\n"
 
-                    for (let i = 0; i < sections.length; i++) {
-                        const sec = sections[i]
-
-                        result += `${sec.id()}\{\{${sec.titleText()}\}\}\n`
-                        result += `${sec.id()} --> ${sec.firstQuestionId()}\n`
-
-                        sec.questions.forEach((q) => {
-                            result += this.processQuestion(q)
-                        })
-                    }
+                    sections.forEach((s) => {
+                        result += this.processSection(s)
+                    })
                 } else {
                     result += "Start --> 1\n"
 
-                    this.questions().forEach((q) => {
+                    questions.forEach((q) => {
                         result += this.processQuestion(q)
                     })
                 }
