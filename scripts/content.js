@@ -17,9 +17,14 @@
   // This regexp matches both cases.
   const qnumregexp = /^(\d{1,5})\.(.*)$/
 
+  // Strings in mermaid, if they contain special characters, should be
+  // enclosed in double quotes, with any actual double quotes encoded.
   function sanitiseForMermaid(text) {
     return `\"${text.replaceAll("\"", "#quot;")}\"`
   }
+
+  // Titles do not need surrounding quotes
+  const sanitiseTitle = (text) => `${text.replaceAll("\"", "#quot;")}`
 
   // A form consists of multiple questions. Each question is contained
   // in an HTML element, which has a specific structure. The structure
@@ -57,7 +62,7 @@
     } else {
       // All question elements are directly availble in the
       // form body.
-      // See createQuestion() to understand the structure of
+      // See parseQuestion() to understand the structure of
       // question elements.
       // Every question element has the css class
       // '.office-form-question'
@@ -230,7 +235,7 @@
       ? destinationSpan.innerText
       : 'Next'
 
-    const titletext = sanitiseForMermaid(secLabel.getAttribute('aria-label'))
+    const titletext = sanitiseTitle(secLabel.getAttribute('aria-label'))
     // If no specific title is given to a section, a default
     // value of 'Section title' is shown. This value is NOT
     // included in destination strings.
