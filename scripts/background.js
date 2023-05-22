@@ -1,23 +1,29 @@
 'use strict'
 
 const FORMSHOST = 'forms.office.com'
+const FORMSHOST2 = 'forms.microsoft.com'
 const PATHPREFIX1 = '/pages/designpagev2.aspx'
 const PATHPREFIX2 = '/Pages/DesignPageV2.aspx'
 const MSFORMSDESIGNPAGE = `https://${FORMSHOST}${PATHPREFIX1}`
 const MSFORMSDESIGNPAGE2 = `https://${FORMSHOST}${PATHPREFIX2}`
+const MSFORMSDESIGNPAGE3 = `https://${FORMSHOST2}${PATHPREFIX1}`
+const MSFORMSDESIGNPAGE4 = `https://${FORMSHOST2}${PATHPREFIX2}`
+
 
 chrome.runtime.onInstalled.addListener(
   function extensionInstalled (details) {
     chrome.action.disable()
 
     // Ensure that the extension icon only "lights up" on Microsoft Forms
-    // diagram edit pages. As on 19-Oct-2022, that means the following 2
+    // diagram edit pages. As on 22-May-2023, that means the following 4
     // urls, with at least the query string option shown:
     //
     // https://forms.office.com/pages/designpagev2.aspx?subpage=design
     // https://forms.office.com/pages/DesignPageV2.aspx?subpage=design
+    // https://forms.microsoft.com/pages/designpagev2.aspx?subpage=design
+    // https://forms.microsoft.com/pages/DesignPageV2.aspx?subpage=design
     //
-    // Yes, those are two different urls. URLs are case-sensitive.
+    // Yes, those are four different urls. URLs are case-sensitive.
     //
     // "Lighting up" is achieved by changing the icon from the default
     // gray to full-color. This requires ImageData values, not paths.
@@ -31,6 +37,12 @@ chrome.runtime.onInstalled.addListener(
             }),
             new chrome.declarativeContent.PageStateMatcher({
               pageUrl: { hostSuffix: FORMSHOST, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] }
+            }),
+            new chrome.declarativeContent.PageStateMatcher({
+              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX1, queryContains: 'subpage=design', schemes: ['https'] }
+            }),
+            new chrome.declarativeContent.PageStateMatcher({
+              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] }
             })
           ],
           actions: [
@@ -63,7 +75,10 @@ async function loadImageData (url) {
 
 chrome.action.onClicked.addListener(
   function actionClicked (tab) {
-    if (tab.url.includes(MSFORMSDESIGNPAGE) || tab.url.includes(MSFORMSDESIGNPAGE2)) {
+    if (
+      tab.url.includes(MSFORMSDESIGNPAGE) || tab.url.includes(MSFORMSDESIGNPAGE2) ||
+      tab.url.includes(MSFORMSDESIGNPAGE3) || tab.url.includes(MSFORMSDESIGNPAGE4)
+    ) {
       chrome.scripting.executeScript(
         {
           target: { tabId: tab.id },
