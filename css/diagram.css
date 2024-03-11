@@ -51,6 +51,41 @@ header #savepanel div {
     color: white;
     font-weight: bold;
     background-color: var(--highlight-color);
+    margin: 0 0.25rem;
+}
+
+
+div.dropdown {
+    position: relative;
+}
+
+div.dropdown::after {
+    display: inline-block;
+    position: absolute;
+    right: 1rem;
+    top: 45%;
+    content: "";
+    border-left: 0.48rem solid transparent;
+    border-right: 0.48rem solid transparent;
+    border-top: 0.5rem solid white;
+    pointer-events: none;
+}
+
+div.dropdown select {
+    appearance: none;
+    color: white;
+    font-weight: bold;
+    background-color: var(--highlight-color);
+    position: relative;
+    padding-right: 2rem;
+    border: none;
+    box-shadow: none;
+}
+
+div.dropdown select:focus, div.dropdown select:current {
+    background-color: var(--highlight-color);
+    border: none !important;
+    box-shadow: none !important;
 }
 
 #statuspanel {

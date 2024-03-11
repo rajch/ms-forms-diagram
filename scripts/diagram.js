@@ -2,26 +2,14 @@
 
 /* global mermaid, chrome */
 
-const diagramDefaultConfig = `
----
-config:
-  theme: base
-  themeVariables:
-    primaryColor: "#ececff"
-    secondaryColor: "#e8e8e8"  
-    #primaryBorderColor:
-  flowchart:
-    #curve: 'curveStepAfter'
----
-`
-
 const diagramPage = {
   self: undefined,
   downloadUrl: undefined,
   svgBlobUrl: undefined,
   diagramTitle: '',
   diagramText: '',
-  diagramConfig: '',
+  diagramPrimaryColor: '#ececff',
+  diagramStyle: 'basis',
   diagramMode: 'default',
   setTitle (diagramtitle) {
     this.diagramTitle = diagramtitle
@@ -37,8 +25,11 @@ const diagramPage = {
   },
   setElementText (elementid, text) {
     const element = document.getElementById(elementid)
+
     element.innerHTML = ''
     element.append(document.createTextNode(text))
+
+    return element
   },
   setStatus (text) {
     this.setElementText('statuspanel', text)
@@ -49,15 +40,44 @@ const diagramPage = {
   },
   setDiagramText (text) {
     this.diagramText = text
-    const diagramCode = this.diagramConfig + text
-    console.log(diagramCode)
-    this.setElementText('diagram', diagramCode)
+
+    this.refreshDiagram()
+  },
+  setDiagramStyle (stylename) {
+    this.diagramStyle = stylename
+
+    this.refreshDiagram()
+  },
+  diagramSource () {
+    return `---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#ececff"
+    secondaryColor: "#e8e8e8"
+    primaryBorderColor: "${this.diagramPrimaryColor}"
+  flowchart:
+    curve: ${this.diagramStyle}
+---
+${this.diagramText}`
+  },
+  refreshDiagram () {
+    const diagramElement = this.setElementText('diagram', this.diagramSource())
+    diagramElement.removeAttribute('data-processed')
+
+    mermaid.run({ nodes: [diagramElement], suppressErrors: true }).catch(
+      e => window.alert(e.message)
+    )
   },
   showDiagram (diagramtitle, diagramtext) {
-    this.setTitle(diagramtitle)
-    this.setDiagramText(diagramtext)
-
-    mermaid.run({ nodes: document.querySelectorAll('.dynmermaid') })
+    if (diagramtitle) {
+      this.setTitle(diagramtitle)
+    }
+    if (diagramtext) {
+      this.setDiagramText(diagramtext)
+    } else {
+      this.refreshDiagram()
+    }
   },
   clearDiagram () {
     const diagram = document.getElementById('diagram')
@@ -150,43 +170,6 @@ const diagramPage = {
     console.log('Downloading from blob url')
     this.createDownloadImage(this.svgBlobUrl, fallbacksvg)
   },
-  chromeMessageReceived (request, sender) {
-    if (!request || !request.status) {
-      this.setErrorStatus(
-        'Error: Wrong message sent. Please contact the developers.'
-      )
-      return
-    }
-
-    if (request.status === 'Error') {
-      this.setErrorStatus('Error: ' + request.error)
-      this.showOpenBranchEditorPanel()
-      return
-    }
-
-    if (request.status === 'Success') {
-      this.setStatus('')
-
-      // Set colors per theme
-      if (request.themePrimaryColor) {
-        document.body.style.setProperty('--highlight-color', request.themePrimaryColor)
-        this.diagramConfig = diagramDefaultConfig.replace(
-          '#primaryBorderColor:',
-          `primaryBorderColor: "${request.themePrimaryColor.toLowerCase()}"`
-        )
-      }
-
-      this.showDiagram(request.diagramTitle, request.diagramText)
-
-      const self = this
-      const saveButton = document.getElementById('savebutton')
-      saveButton.addEventListener('click', (e) => {
-        self.saveButtonClicked()
-      })
-
-      this.showElement('savepanel')
-    }
-  },
   saveButtonClicked (e) {
     if (this.downloadUrl) {
       console.log('Downloading from cached blob URL')
@@ -230,6 +213,51 @@ const diagramPage = {
         this.svgBlobUrl = ''
       }
       console.log('Blobs cleared')
+    }
+  },
+  chromeMessageReceived (request, sender) {
+    if (!request || !request.status) {
+      this.setErrorStatus(
+        'Error: Wrong message sent. Please contact the developers.'
+      )
+      return
+    }
+
+    if (request.status === 'Error') {
+      this.setErrorStatus('Error: ' + request.error)
+      this.showOpenBranchEditorPanel()
+      return
+    }
+
+    if (request.status === 'Success') {
+      this.setStatus('')
+
+      // Set colors per theme
+      if (request.themePrimaryColor) {
+        document.body.style.setProperty('--highlight-color', request.themePrimaryColor)
+        this.diagramPrimaryColor = request.themePrimaryColor.toLowerCase()
+      }
+
+      this.showDiagram(request.diagramTitle, request.diagramText)
+
+      const self = this
+      const saveButton = document.getElementById('savebutton')
+      saveButton.addEventListener('click', (e) => {
+        self.saveButtonClicked()
+      })
+      const copysourcebutton = document.getElementById('copysourcebutton')
+      copysourcebutton.addEventListener('click', (e) => {
+        navigator.clipboard.writeText(self.diagramSource())
+        window.alert('Mermaid source copied to clipboard.')
+      })
+      const styledropdown = document.getElementById('styledropdown')
+      styledropdown.addEventListener('change', (e) => {
+        const selectedstyle = e.target.value
+        self.setDiagramStyle(selectedstyle)
+        this.showDiagram()
+      })
+
+      this.showElement('savepanel')
     }
   },
   init () {
