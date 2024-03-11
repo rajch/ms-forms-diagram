@@ -1,11 +1,27 @@
 'use strict'
 
+/* global mermaid, chrome */
+
+const diagramDefaultConfig = `
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#ececff"
+    secondaryColor: "#e8e8e8"  
+    #primaryBorderColor:
+  flowchart:
+    #curve: 'curveStepAfter'
+---
+`
+
 const diagramPage = {
   self: undefined,
   downloadUrl: undefined,
   svgBlobUrl: undefined,
   diagramTitle: '',
   diagramText: '',
+  diagramConfig: '',
   diagramMode: 'default',
   setTitle (diagramtitle) {
     this.diagramTitle = diagramtitle
@@ -33,13 +49,15 @@ const diagramPage = {
   },
   setDiagramText (text) {
     this.diagramText = text
-    this.setElementText('diagram', text)
+    const diagramCode = this.diagramConfig + text
+    console.log(diagramCode)
+    this.setElementText('diagram', diagramCode)
   },
   showDiagram (diagramtitle, diagramtext) {
     this.setTitle(diagramtitle)
     this.setDiagramText(diagramtext)
 
-    mermaid.init(undefined, '.dynmermaid')
+    mermaid.run({ nodes: document.querySelectorAll('.dynmermaid') })
   },
   clearDiagram () {
     const diagram = document.getElementById('diagram')
@@ -149,6 +167,15 @@ const diagramPage = {
     if (request.status === 'Success') {
       this.setStatus('')
 
+      // Set colors per theme
+      if (request.themePrimaryColor) {
+        document.body.style.setProperty('--highlight-color', request.themePrimaryColor)
+        this.diagramConfig = diagramDefaultConfig.replace(
+          '#primaryBorderColor:',
+          `primaryBorderColor: "${request.themePrimaryColor.toLowerCase()}"`
+        )
+      }
+
       this.showDiagram(request.diagramTitle, request.diagramText)
 
       const self = this
@@ -207,6 +234,8 @@ const diagramPage = {
   },
   init () {
     const self = this
+
+    mermaid.initialize({ startOnLoad: false })
 
     chrome.runtime.onMessage.addListener((request, sender) => {
       self.chromeMessageReceived(request, sender)

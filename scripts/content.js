@@ -19,12 +19,12 @@
 
   // Strings in mermaid, if they contain special characters, should be
   // enclosed in double quotes, with any actual double quotes encoded.
-  function sanitiseForMermaid(text) {
-    return `\"${text.replaceAll("\"", "#quot;")}\"`
+  function sanitiseForMermaid (text) {
+    return `"${text.replaceAll('"', '#quot;')}"`
   }
 
   // Titles do not need surrounding quotes
-  const sanitiseTitle = (text) => `${text.replaceAll("\"", "#quot;")}`
+  const sanitiseTitle = (text) => `${text.replaceAll('"', '#quot;')}`
 
   // A form consists of multiple questions. Each question is contained
   // in an HTML element, which has a specific structure. The structure
@@ -34,7 +34,7 @@
   // A form may optionally be divided into sections. Each section is
   // contained in an HTML element, which contains a set of question
   // elements, and a pointer to the next section (destinationString).
-  function parseForm() {
+  function parseForm () {
     let sections
     let questions
     let qcount = 0
@@ -79,7 +79,7 @@
     }
 
     return {
-      getSectionId(sectionTitle) {
+      getSectionId (sectionTitle) {
         let result = ''
         if (scount) {
           const sec = sections.find((s) => sectionTitle === s.title())
@@ -87,7 +87,7 @@
         }
         return result
       },
-      getSectionDestination(question) {
+      getSectionDestination (question) {
         if (!question.section()) {
           return this.getNextQuestion(question)
         }
@@ -105,18 +105,18 @@
 
         return this.getSectionId(secdest)
       },
-      getNextQuestion(question) {
+      getNextQuestion (question) {
         const toNum = parseInt(question.id()) + 1
         return toNum > qcount ? 'End' : toNum.toString()
       },
-      getNextDestination(question) {
+      getNextDestination (question) {
         if (question.isLastInSection()) {
           return this.getSectionDestination(question)
         } else {
           return this.getNextQuestion(question)
         }
       },
-      getDestinationId(gotoValue, question) {
+      getDestinationId (gotoValue, question) {
         // Empty gotoValue implies next
         if (!gotoValue) {
           return this.getNextDestination(question)
@@ -140,7 +140,7 @@
         // Now it must be a question title. Extract id
         return gotoValue.match(qnumregexp)[1]
       },
-      processQuestion(question) {
+      processQuestion (question) {
         const thisForm = this
 
         let result = ''
@@ -153,7 +153,7 @@
 
           const choices = question.choices
 
-          choices.forEach(function processChoices(choice) {
+          choices.forEach(function processChoices (choice) {
             const choiceTitle = choice.title()
             const destId = thisForm.getDestinationId(
               choice.destinationString(), question
@@ -171,7 +171,7 @@
 
         return result
       },
-      processSection(section) {
+      processSection (section) {
         let result = ''
 
         const sec = section
@@ -184,7 +184,7 @@
 
         return result
       },
-      process() {
+      process () {
         // Begin a mermaid flowchart
         let result = 'graph TD\nStart([Start])\nEnd([End])\n'
 
@@ -208,7 +208,7 @@
     }
   }
 
-  function parseSection(sectionOrdinal, sectionMarkerElement) {
+  function parseSection (sectionOrdinal, sectionMarkerElement) {
     // Sections are contained in structures like this:
     // <div>
     //      <div>
@@ -247,26 +247,26 @@
 
     const section = {
       questions: [],
-      ordinal() {
+      ordinal () {
         return sectionOrdinal
       },
-      id() {
+      id () {
         return `Section${sectionOrdinal}`
       },
-      titleText() {
+      titleText () {
         return titletext
       },
-      title() {
+      title () {
         return title
       },
-      firstQuestionId() {
+      firstQuestionId () {
         if (this.questions && this.questions.length) {
           return this.questions[0].id()
         } else {
           return ''
         }
       },
-      lastQuestionId() {
+      lastQuestionId () {
         const qs = this.questions
         if (qs && qs.length) {
           return qs[qs.length - 1].id()
@@ -274,7 +274,7 @@
           return ''
         }
       },
-      destinationString() {
+      destinationString () {
         return destination
       }
     }
@@ -296,7 +296,7 @@
     return section
   }
 
-  function parseQuestion(questionElement, section) {
+  function parseQuestion (questionElement, section) {
     // The question text, type and required-ness are all contained
     // as a single string in the "aria-label" attribute of the
     // question element.
@@ -319,7 +319,6 @@
 
     // Mermaid cannot handle parenthesis, semicolons, slashes or
     // angle brackets in text
-    //titletext = titletext.replace(/[(/);<>:]/g, '')
     titletext = sanitiseForMermaid(titletext)
 
     // If a question is not currently selected for editing, the element
@@ -375,28 +374,28 @@
 
     const question = {
       choices: [],
-      id() {
+      id () {
         return id
       },
-      titleText() {
+      titleText () {
         return titletext
       },
-      title() {
+      title () {
         return `${id}. ${titletext}`
       },
-      selectedForEditing() {
+      selectedForEditing () {
         return selectedforediting
       },
-      multipleBranches() {
+      multipleBranches () {
         return multiplebranches
       },
-      destinationString() {
+      destinationString () {
         return destination
       },
-      section() {
+      section () {
         return section
       },
-      isLastInSection() {
+      isLastInSection () {
         return section
           ? id === section.lastQuestionId()
           : false
@@ -420,7 +419,7 @@
     return question
   }
 
-  function parseChoice(choiceElement, question) {
+  function parseChoice (choiceElement, question) {
     // A span with the class '.text-format-content' will have the
     // choice title, or text.
     const choiceTitle =
@@ -460,10 +459,10 @@
       : ''
 
     return {
-      title() {
+      title () {
         return choiceTitle
       },
-      destinationString() {
+      destinationString () {
         return destinationstring
       }
     }
@@ -502,5 +501,10 @@
   finalresult.status = 'Success'
   finalresult.diagramTitle = document.title
   finalresult.diagramText = result
+
+  // Fetch and pass theme information
+  const bodyStyles = getComputedStyle(document.body)
+  finalresult.themePrimaryColor = bodyStyles.getPropertyValue('--palette-form-primary')
+
   return finalresult
 })()

@@ -5,17 +5,19 @@
 body {
     font-family: 'Open Sans', 'Arial', 'Helvetica', sans-serif;
     font-size: 11pt;
+    --highlight-color: #1d71b8;
 }
 
 h1 {
     font-weight: 600;
+    color: var(--highlight-color);
 }
 
 h2 {
     font-size: 1.2rem;
     text-transform: capitalize;
     font-weight: bold;
-    color: #1d71b8;
+    color: var(--highlight-color);
 }
 
 header {
@@ -48,7 +50,7 @@ header #savepanel div {
     padding: 1rem;
     color: white;
     font-weight: bold;
-    background-color: #1d71b8;
+    background-color: var(--highlight-color);
 }
 
 #statuspanel {

@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Forms Diagram",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Show branch logic in a Microsoft Forms form as a diagram",
     "icons": {
         "16": "images/icon16.png",

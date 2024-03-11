@@ -1,5 +1,7 @@
 'use strict'
 
+/* global chrome */
+
 const FORMSHOST = 'forms.office.com'
 const FORMSHOST2 = 'forms.microsoft.com'
 const PATHPREFIX1 = '/pages/designpagev2.aspx'
@@ -8,7 +10,6 @@ const MSFORMSDESIGNPAGE = `https://${FORMSHOST}${PATHPREFIX1}`
 const MSFORMSDESIGNPAGE2 = `https://${FORMSHOST}${PATHPREFIX2}`
 const MSFORMSDESIGNPAGE3 = `https://${FORMSHOST2}${PATHPREFIX1}`
 const MSFORMSDESIGNPAGE4 = `https://${FORMSHOST2}${PATHPREFIX2}`
-
 
 chrome.runtime.onInstalled.addListener(
   function extensionInstalled (details) {
