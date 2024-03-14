@@ -115,3 +115,8 @@ div.dropdown select:focus, div.dropdown select:current {
 pre#diagram {
     text-align: center;
 }
+
+/* This div appears if the diagram source has an error. */
+div#ddiagramSvg {
+    text-align: center;
+}
