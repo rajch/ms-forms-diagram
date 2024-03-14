@@ -70,6 +70,14 @@ chrome.runtime.onInstalled.addListener(
         chrome.declarativeContent.onPageChanged.addRules([formsrule])
       }
     )
+
+    if(details.reason === chrome.runtime.OnInstalledReason.UPDATE ||
+       details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+
+        chrome.tabs.create({ url: 'welcome.html' }, function (tab) {
+          console.log("Welcome tab shown.");
+      });
+    }
   }
 )
 
