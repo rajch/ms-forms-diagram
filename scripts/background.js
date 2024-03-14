@@ -26,6 +26,10 @@ chrome.runtime.onInstalled.addListener(
     //
     // Yes, those are four different urls. URLs are case-sensitive.
     //
+    // Also, the page should be in branch edit mode, which we can detect
+    // by the presence of a span having a role attribute with the value
+    // "heading".
+    //
     // "Lighting up" is achieved by changing the icon from the default
     // gray to full-color. This requires ImageData values, not paths.
     chrome.declarativeContent.onPageChanged.removeRules(
@@ -34,16 +38,20 @@ chrome.runtime.onInstalled.addListener(
         const formsrule = {
           conditions: [
             new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { hostSuffix: FORMSHOST, pathPrefix: PATHPREFIX1, queryContains: 'subpage=design', schemes: ['https'] }
+              pageUrl: { hostSuffix: FORMSHOST, pathPrefix: PATHPREFIX1, queryContains: 'subpage=design', schemes: ['https'] },
+              css: ["span[role='heading']"]
             }),
             new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { hostSuffix: FORMSHOST, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] }
+              pageUrl: { hostSuffix: FORMSHOST, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] },
+              css: ["span[role='heading']"]
             }),
             new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX1, queryContains: 'subpage=design', schemes: ['https'] }
+              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX1, queryContains: 'subpage=design', schemes: ['https'] },
+              css: ["span[role='heading']"]
             }),
             new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] }
+              pageUrl: { hostSuffix: FORMSHOST2, pathPrefix: PATHPREFIX2, queryContains: 'subpage=design', schemes: ['https'] },
+              css: ["span[role='heading']"]
             })
           ],
           actions: [
