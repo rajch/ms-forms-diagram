@@ -183,11 +183,13 @@ const diagramPage = {
     if (document.visibilityState === 'hidden') {
       if (this.downloadUrl) {
         URL.revokeObjectURL(this.downloadUrl)
-        this.downloadUrl = ''
+        this.downloadUrl = undefined
+        console.log('Download png cleared')
       }
       if (this.svgBlobUrl) {
         URL.revokeObjectURL(this.svgBlobUrl)
-        this.svgBlobUrl = ''
+        this.svgBlobUrl = undefined
+        console.log('Copy svg cleared')
       }
       console.log('Blobs cleared')
     }
