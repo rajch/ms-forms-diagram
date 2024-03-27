@@ -1,0 +1,40 @@
+{
+    "description": {
+        "message": "Show branch logic in a Microsoft Forms form as a flowchart diagram."
+    },
+    "diagramPage": {
+        "message": "diagram.html"
+    },
+    "welcomePage" : {
+        "message": "welcome.html"
+    },
+    "nextWord": {
+        "message": "Next"
+    },
+    "endOfFormPhrase": {
+        "message": "End of the form"
+    },
+    "defaultSectionTitle": {
+        "message": "Section title"
+    },
+    "branchingOptions": {
+        "message": "Branching options"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "Not on Branching Options screen ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "Error: Wrong message sent. Please contact the developers."
+    },
+    "msgDiagramCopied": {
+        "message": "Diagram copied to clipboard."
+    },
+    "msgSourceCopied": {
+        "message": "Mermaid source copied to clipboard."
+    }
+}

@@ -9,6 +9,9 @@ const diagramPage = {
   diagramText: '',
   diagramPrimaryColor: '#ececff',
   diagramStyle: 'basis',
+  getLocalizedMessage(messagename) {
+    return chrome.i18n.getMessage(messagename)
+  },
   hideElement(elementid) {
     const element = document.getElementById(elementid)
     element.classList.add('hidden')
@@ -155,7 +158,7 @@ const diagramPage = {
             'image/png': blob
           })
         ])
-        window.alert('Diagram copied to clipboard.')
+        window.alert(this.getLocalizedMessage('msgDiagramCopied'))
       } catch (error) {
         self.setErrorStatus(error)
       }
@@ -163,7 +166,7 @@ const diagramPage = {
   },
   copySourceButtonClicked(e) {
     navigator.clipboard.writeText(this.diagramSource())
-    window.alert('Mermaid source copied to clipboard.')
+    window.alert(this.getLocalizedMessage('msgSourceCopied'))
   },
   saveButtonClicked(e) {
     const self = this
@@ -197,7 +200,7 @@ const diagramPage = {
   chromeMessageReceived(request, sender) {
     if (!request || !request.status) {
       this.setErrorStatus(
-        'Error: Wrong message sent. Please contact the developers.'
+        this.getLocalizedMessage('errWrongMessage')
       )
       return
     }

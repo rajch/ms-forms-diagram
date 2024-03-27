@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagramme de formulaires</title>
+  <link rel="stylesheet" href="css/diagram.css">
+</head>
+
+<body>
+  <header>
+    <h1 id="diagramtitle">Chargement du diagramme...</h1>
+    <div id="savepanel" class="hidden">
+      <div class="dropdown">
+        <select id="styledropdown">
+          <option value="basis">Style par défaut</option>
+          <option value="linear">Style droit</option>
+          <option value="cardinal">Style oblique</option>
+          <option value="stepAfter">Style en boîte</option>
+        </select>
+      </div>
+      <div id="copybutton" title="Copier le diagramme dans le Presse-papier">Copier</div>
+      <div id="copysourcebutton" title="Copier le code source du diagramme dans le Presse-papier">Copier le code source</div>
+      <div id="savebutton" title="Télécharger le diagramme au format PNG">Enregistrer au format PNG</div>
+    </div>
+  </header>
+  <main>
+    <div id="statuspanel" class="statuspanel ">
+      <p>Chargement. Veuillez patienter...</p>
+      <p class="animate">N'actualisez pas cette page. Revenez plutôt à la page du formulaire et cliquez à nouveau sur l'extension.</p>
+    </div>
+    <div id="openbrancheditor" class="hidden">
+      <h2>Options de branche non sélectionnées</h2>
+      <p>Avant d'appeler Forms Diagram, veuillez ouvrir l'écran Options de branche en:</p>
+      <ol>
+        <li>Cliquant sur n'importe quelle question.</li>
+        <li>Sélectionnant "Ajouter une ramification" dans le menu des ellipses.</li>
+      </ol>
+    </div>
+    <pre id="diagram" class="dynmermaid">
+      <svg id="diagramSvg"></svg>
+    </pre>
+  </main>
+
+  <script src="scripts/mermaid.min.js"></script>
+  <script src="scripts/diagram.js"></script>
+</body>
+
+</html>

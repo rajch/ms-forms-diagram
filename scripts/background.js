@@ -74,9 +74,7 @@ chrome.runtime.onInstalled.addListener(
     if(details.reason === chrome.runtime.OnInstalledReason.UPDATE ||
        details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
 
-        chrome.tabs.create({ url: 'welcome.html' }, function (tab) {
-          console.log("Welcome tab shown.");
-      });
+        chrome.tabs.create({ url: chrome.i18n.getMessage('welcomePage') });
     }
   }
 )
@@ -107,9 +105,10 @@ chrome.action.onClicked.addListener(
           for (const injectionresult of injectionresults) {
             console.log(injectionresult.result)
 
+            const pagename = chrome.i18n.getMessage("diagramPage")
             chrome.tabs.create(
               {
-                url: chrome.runtime.getURL('diagram.html'),
+                url: chrome.runtime.getURL(pagename),
                 active: true
               },
               function tabCreated (tab) {

@@ -1,0 +1,40 @@
+{
+    "description": {
+        "message": "Affichez la logique de branche dans un formulaire Microsoft Forms sous la forme d’un diagramme d’organigramme."
+    },
+    "diagramPage": {
+        "message": "diagram-fr.html"
+    },
+    "welcomePage": {
+        "message": "welcome-fr.html"
+    },
+    "nextWord": {
+        "message": "Suivant"
+    },
+    "endOfFormPhrase": {
+        "message": "Fin du formulaire"
+    },
+    "defaultSectionTitle": {
+        "message": "Titre de la section"
+    },
+    "branchingOptions": {
+        "message": "Options d’embranchement"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "Pas sur l’écran Options d'ebranchement ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "Error : message envoyé erroné. Veuillez contacter les développeurs."
+    },
+    "msgDiagramCopied": {
+        "message": "Diagramme copié dans le Presse-papiers."
+    },
+    "msgSourceCopied": {
+        "message": "Source au format Mermaid copiée dans le Presse-papiers."
+    }
+}
