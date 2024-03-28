@@ -14,105 +14,105 @@ const diagramPage = {
   diagramThemeSecondaryColor: '',
   diagramThemePrimaryBorderColor: undefined,
 
-  hexToHsl(hexColor) {
+  hexToHsl (hexColor) {
     // Remove the hash symbol if present
-    const cleanedHex = hexColor.replace(/^#/, '');
+    const cleanedHex = hexColor.replace(/^#/, '')
 
     // Convert the hex value to RGB
-    const r = parseInt(cleanedHex.substring(0, 2), 16) / 255;
-    const g = parseInt(cleanedHex.substring(2, 4), 16) / 255;
-    const b = parseInt(cleanedHex.substring(4, 6), 16) / 255;
+    const r = parseInt(cleanedHex.substring(0, 2), 16) / 255
+    const g = parseInt(cleanedHex.substring(2, 4), 16) / 255
+    const b = parseInt(cleanedHex.substring(4, 6), 16) / 255
 
     // Find the maximum and minimum RGB values
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b)
 
     // Calculate the luminosity (lightness)
-    const l = (max + min) / 2;
+    const l = (max + min) / 2
 
     // Calculate the saturation
-    let s;
+    let s
     if (max === min) {
-      s = 0; // No saturation (gray)
+      s = 0 // No saturation (gray)
     } else {
-      s = l > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min);
+      s = l > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min)
     }
 
     // Calculate the hue
-    let h;
+    let h
     if (max === min) {
-      h = 0; // No hue (gray)
+      h = 0 // No hue (gray)
     } else if (max === r) {
-      h = (g - b) / (max - min);
+      h = (g - b) / (max - min)
     } else if (max === g) {
-      h = 2 + (b - r) / (max - min);
+      h = 2 + (b - r) / (max - min)
     } else {
-      h = 4 + (r - g) / (max - min);
+      h = 4 + (r - g) / (max - min)
     }
-    h = (h * 60 + 360) % 360;
+    h = (h * 60 + 360) % 360
 
     // Round values and return the HSL object
     return {
       h: Math.round(h),
       s: Math.round(s * 100),
-      l: Math.round(l * 100),
-    };
+      l: Math.round(l * 100)
+    }
   },
-  hslToHex(hslObject) {
-    const { h, s, l } = hslObject;
+  hslToHex (hslObject) {
+    const { h, s, l } = hslObject
 
     // Convert hue to the range [0, 360)
-    const hue = ((h % 360) + 360) % 360;
+    const hue = ((h % 360) + 360) % 360
 
     // Normalize saturation and luminosity to [0, 1]
-    const saturation = Math.max(0, Math.min(1, s / 100));
-    const luminosity = Math.max(0, Math.min(1, l / 100));
+    const saturation = Math.max(0, Math.min(1, s / 100))
+    const luminosity = Math.max(0, Math.min(1, l / 100))
 
     // Calculate chroma (colorfulness)
-    const chroma = (1 - Math.abs(2 * luminosity - 1)) * saturation;
+    const chroma = (1 - Math.abs(2 * luminosity - 1)) * saturation
 
     // Calculate intermediate values
-    const x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
-    const m = luminosity - chroma / 2;
+    const x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1))
+    const m = luminosity - chroma / 2
 
     // Convert to RGB
-    let r, g, b;
+    let r, g, b
     if (hue >= 0 && hue < 60) {
-      r = chroma;
-      g = x;
-      b = 0;
+      r = chroma
+      g = x
+      b = 0
     } else if (hue >= 60 && hue < 120) {
-      r = x;
-      g = chroma;
-      b = 0;
+      r = x
+      g = chroma
+      b = 0
     } else if (hue >= 120 && hue < 180) {
-      r = 0;
-      g = chroma;
-      b = x;
+      r = 0
+      g = chroma
+      b = x
     } else if (hue >= 180 && hue < 240) {
-      r = 0;
-      g = x;
-      b = chroma;
+      r = 0
+      g = x
+      b = chroma
     } else if (hue >= 240 && hue < 300) {
-      r = x;
-      g = 0;
-      b = chroma;
+      r = x
+      g = 0
+      b = chroma
     } else {
-      r = chroma;
-      g = 0;
-      b = x;
+      r = chroma
+      g = 0
+      b = x
     }
 
     // Convert RGB to 8-bit integers
-    const red = Math.round((r + m) * 255);
-    const green = Math.round((g + m) * 255);
-    const blue = Math.round((b + m) * 255);
+    const red = Math.round((r + m) * 255)
+    const green = Math.round((g + m) * 255)
+    const blue = Math.round((b + m) * 255)
 
     // Convert to hex format
-    const hexColor = `#${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
-    return hexColor;
+    const hexColor = `#${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`
+    return hexColor
   },
-  lighten(hexColor, luminosity) {
+  lighten (hexColor, luminosity) {
     const hslv = this.hexToHsl(hexColor)
     return this.hslToHex({
       h: hslv.h,
@@ -122,37 +122,37 @@ const diagramPage = {
   },
 
   themeFuncs: {
-    default(self) {
+    default (self) {
       self.diagramThemeName = 'base'
       self.diagramThemePrimaryColor = '#ececff'
       self.diagramThemeSecondaryColor = '#e8e8e8'
       self.diagramThemePrimaryBorderColor = self.diagramPrimaryColor
     },
-    themed(self) {
+    themed (self) {
       self.diagramThemeName = 'base'
       self.diagramThemePrimaryColor = self.lighten(self.diagramPrimaryColor, 90)
       self.diagramThemeSecondaryColor = '#ffffff'
       self.diagramThemePrimaryBorderColor = self.diagramPrimaryColor
     },
-    mono(self) {
+    mono (self) {
       self.diagramThemeName = 'neutral'
       self.diagramThemePrimaryColor = '#ececff'
       self.diagramThemeSecondaryColor = '#e8e8e8'
       self.diagramThemePrimaryBorderColor = undefined
     }
   },
-  getLocalizedMessage(messagename) {
+  getLocalizedMessage (messagename) {
     return chrome.i18n.getMessage(messagename)
   },
-  hideElement(elementid) {
+  hideElement (elementid) {
     const element = document.getElementById(elementid)
     element.classList.add('hidden')
   },
-  showElement(elementid, hide) {
+  showElement (elementid, hide) {
     const element = document.getElementById(elementid)
     element.classList.remove('hidden')
   },
-  setElementText(elementid, text) {
+  setElementText (elementid, text) {
     const element = document.getElementById(elementid)
 
     element.innerHTML = ''
@@ -160,33 +160,33 @@ const diagramPage = {
 
     return element
   },
-  setDiagramTitle(diagramtitle) {
+  setDiagramTitle (diagramtitle) {
     this.diagramTitle = diagramtitle
     this.setElementText('diagramtitle', diagramtitle)
   },
-  setStatus(text) {
+  setStatus (text) {
     this.setElementText('statuspanel', text)
   },
-  setErrorStatus(text) {
+  setErrorStatus (text) {
     this.setDiagramTitle('Error')
     this.setStatus(text)
   },
-  setDiagramText(text) {
+  setDiagramText (text) {
     this.diagramText = text
 
     this.refreshDiagram()
   },
-  setDiagramStyle(stylename) {
+  setDiagramStyle (stylename) {
     this.diagramStyle = stylename
 
     this.refreshDiagram()
   },
-  setDiagramTheme(themename) {
+  setDiagramTheme (themename) {
     this.themeFuncs[themename](this)
 
     this.refreshDiagram()
   },
-  diagramSource(noHTMLFlag) {
+  diagramSource (noHTMLFlag) {
     return [
       '---',
       'config:',
@@ -194,15 +194,15 @@ const diagramPage = {
       '  themeVariables:',
       `    primaryColor: "${this.diagramThemePrimaryColor}"`,
       `    secondaryColor: "${this.diagramThemeSecondaryColor}"`,
-      this.diagramPrimaryColor && `    primaryBorderColor: "${this.diagramPrimaryColor}"` || '',
+      this.diagramPrimaryColor ? `    primaryBorderColor: "${this.diagramPrimaryColor}"` : '',
       '  flowchart:',
       `    curve: ${this.diagramStyle}`,
-      noHTMLFlag && '    htmlLabels: false' || '',
+      noHTMLFlag ? '    htmlLabels: false' : '',
       '---',
       `${this.diagramText}`
     ].join('\n')
   },
-  refreshDiagram() {
+  refreshDiagram () {
     const self = this
 
     const diagramElement = document.getElementById('diagram')
@@ -216,16 +216,15 @@ const diagramPage = {
         self.setErrorStatus(error)
       })
     }, 0)
-
   },
-  showOpenBranchEditorPanel() {
+  showOpenBranchEditorPanel () {
     this.showElement('openbrancheditor')
     this.hideElement('diagram')
   },
-  sanitiseMermaidSvg(text) {
+  sanitiseMermaidSvg (text) {
     return text.replaceAll('&nbsp;', ' ')
   },
-  createPngBlob(callback) {
+  createPngBlob (callback) {
     const self = this
 
     mermaid.render('diagramPng', this.diagramSource(true))
@@ -233,7 +232,7 @@ const diagramPage = {
         const cleansvg = this.sanitiseMermaidSvg(result.svg)
         const b = new Blob(
           [cleansvg],
-          { type: 'image/svg+xml' }
+          { type: 'image/svg+xml;charset=utf-8' }
         )
 
         if (self.svgBlobUrl) {
@@ -280,7 +279,7 @@ const diagramPage = {
         window.alert(this.getLocalizedMessage('errCouldNotCompleteOperation'))
       })
   },
-  downloadImage(imageUrl) {
+  downloadImage (imageUrl) {
     // Create a temporary link, configure it for download,
     // point it to the canvas-generated data url, and
     // 'click' it to trigger a download.
@@ -294,15 +293,15 @@ const diagramPage = {
     a.click()
     a.remove()
   },
-  colorDropdownChanged(e) {
+  colorDropdownChanged (e) {
     const selectedThemeSetting = e.target.value
     this.setDiagramTheme(selectedThemeSetting)
   },
-  styleDropdownChanged(e) {
+  styleDropdownChanged (e) {
     const selectedstyle = e.target.value
     this.setDiagramStyle(selectedstyle)
   },
-  copyButtonClicked(e) {
+  copyButtonClicked (e) {
     const self = this
 
     self.createPngBlob((blob) => {
@@ -319,11 +318,11 @@ const diagramPage = {
       }
     })
   },
-  copySourceButtonClicked(e) {
+  copySourceButtonClicked (e) {
     navigator.clipboard.writeText(this.diagramSource())
     window.alert(this.getLocalizedMessage('msgSourceCopied'))
   },
-  saveButtonClicked(e) {
+  saveButtonClicked (e) {
     const self = this
 
     if (self.downloadUrl) {
@@ -337,7 +336,7 @@ const diagramPage = {
       self.downloadImage(self.downloadUrl)
     })
   },
-  visibilityChanged(e) {
+  visibilityChanged (e) {
     if (document.visibilityState === 'hidden') {
       if (this.downloadUrl) {
         URL.revokeObjectURL(this.downloadUrl)
@@ -352,7 +351,7 @@ const diagramPage = {
       console.log('Blobs cleared')
     }
   },
-  chromeMessageReceived(request, sender) {
+  chromeMessageReceived (request, sender) {
     if (!request || !request.status) {
       this.setErrorStatus(
         this.getLocalizedMessage('errWrongMessage')
@@ -408,7 +407,7 @@ const diagramPage = {
       this.showElement('savepanel')
     }
   },
-  init() {
+  init () {
     const self = this
 
     mermaid.initialize({ startOnLoad: false })
