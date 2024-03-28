@@ -13,8 +13,15 @@
     <header>
         <h1 id="diagramtitle">Diagram loading...</h1>
         <div id="savepanel" class="hidden">
-            <div class="dropdown">
-                <select id="styledropdown">
+            <div class="dropdown" title="Choose color scheme">
+                <select id="colordropdown" title="Choose color scheme">
+                    <option value="default">Default Colors</option>
+                    <option value="themed" >Theme Colors</option>
+                    <option value="mono"   >Monochrome</option>
+                </select>
+            </div>
+            <div class="dropdown" title="Choose drawing style">
+                <select id="styledropdown" title="Choose drawing style">
                     <option value="basis"    >Default style</option>
                     <option value="linear"   >Straight style</option>
                     <option value="cardinal" >Wonky style</option>

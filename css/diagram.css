@@ -47,13 +47,12 @@ header #savepanel {
 header #savepanel div {
     display: flex;
     cursor: pointer;
-    padding: 1rem;
+    padding: 1rem 1rem;
     color: white;
     font-weight: bold;
     background-color: var(--highlight-color);
     margin: 0 0.25rem;
 }
-
 
 div.dropdown {
     position: relative;
@@ -78,8 +77,10 @@ div.dropdown select {
     background-color: var(--highlight-color);
     position: relative;
     padding-right: 2rem;
+    padding-left: 0.5rem;
     border: none;
     box-shadow: none;
+    cursor: pointer;
 }
 
 div.dropdown select:focus, div.dropdown select:current {

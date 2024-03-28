@@ -7,8 +7,140 @@ const diagramPage = {
   svgBlobUrl: undefined,
   diagramTitle: '',
   diagramText: '',
-  diagramPrimaryColor: '#ececff',
   diagramStyle: 'basis',
+  diagramPrimaryColor: '#ececff',
+  diagramThemeName: 'base',
+  diagramThemePrimaryColor: '#ececff',
+  diagramThemeSecondaryColor: '',
+  diagramThemePrimaryBorderColor: undefined,
+
+  hexToHsl(hexColor) {
+    // Remove the hash symbol if present
+    const cleanedHex = hexColor.replace(/^#/, '');
+
+    // Convert the hex value to RGB
+    const r = parseInt(cleanedHex.substring(0, 2), 16) / 255;
+    const g = parseInt(cleanedHex.substring(2, 4), 16) / 255;
+    const b = parseInt(cleanedHex.substring(4, 6), 16) / 255;
+
+    // Find the maximum and minimum RGB values
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+
+    // Calculate the luminosity (lightness)
+    const l = (max + min) / 2;
+
+    // Calculate the saturation
+    let s;
+    if (max === min) {
+      s = 0; // No saturation (gray)
+    } else {
+      s = l > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min);
+    }
+
+    // Calculate the hue
+    let h;
+    if (max === min) {
+      h = 0; // No hue (gray)
+    } else if (max === r) {
+      h = (g - b) / (max - min);
+    } else if (max === g) {
+      h = 2 + (b - r) / (max - min);
+    } else {
+      h = 4 + (r - g) / (max - min);
+    }
+    h = (h * 60 + 360) % 360;
+
+    // Round values and return the HSL object
+    return {
+      h: Math.round(h),
+      s: Math.round(s * 100),
+      l: Math.round(l * 100),
+    };
+  },
+  hslToHex(hslObject) {
+    const { h, s, l } = hslObject;
+
+    // Convert hue to the range [0, 360)
+    const hue = ((h % 360) + 360) % 360;
+
+    // Normalize saturation and luminosity to [0, 1]
+    const saturation = Math.max(0, Math.min(1, s / 100));
+    const luminosity = Math.max(0, Math.min(1, l / 100));
+
+    // Calculate chroma (colorfulness)
+    const chroma = (1 - Math.abs(2 * luminosity - 1)) * saturation;
+
+    // Calculate intermediate values
+    const x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
+    const m = luminosity - chroma / 2;
+
+    // Convert to RGB
+    let r, g, b;
+    if (hue >= 0 && hue < 60) {
+      r = chroma;
+      g = x;
+      b = 0;
+    } else if (hue >= 60 && hue < 120) {
+      r = x;
+      g = chroma;
+      b = 0;
+    } else if (hue >= 120 && hue < 180) {
+      r = 0;
+      g = chroma;
+      b = x;
+    } else if (hue >= 180 && hue < 240) {
+      r = 0;
+      g = x;
+      b = chroma;
+    } else if (hue >= 240 && hue < 300) {
+      r = x;
+      g = 0;
+      b = chroma;
+    } else {
+      r = chroma;
+      g = 0;
+      b = x;
+    }
+
+    // Convert RGB to 8-bit integers
+    const red = Math.round((r + m) * 255);
+    const green = Math.round((g + m) * 255);
+    const blue = Math.round((b + m) * 255);
+
+    // Convert to hex format
+    const hexColor = `#${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
+    return hexColor;
+  },
+  lighten(hexColor, luminosity) {
+    const hslv = this.hexToHsl(hexColor)
+    return this.hslToHex({
+      h: hslv.h,
+      s: hslv.s,
+      l: luminosity
+    })
+  },
+
+  themeFuncs: {
+    default(self) {
+      self.diagramThemeName = 'base'
+      self.diagramThemePrimaryColor = '#ececff'
+      self.diagramThemeSecondaryColor = '#e8e8e8'
+      self.diagramThemePrimaryBorderColor = self.diagramPrimaryColor
+    },
+    themed(self) {
+      self.diagramThemeName = 'base'
+      self.diagramThemePrimaryColor = self.lighten(self.diagramPrimaryColor, 90)
+      self.diagramThemeSecondaryColor = '#ffffff'
+      self.diagramThemePrimaryBorderColor = self.diagramPrimaryColor
+    },
+    mono(self) {
+      self.diagramThemeName = 'neutral'
+      self.diagramThemePrimaryColor = '#ececff'
+      self.diagramThemeSecondaryColor = '#e8e8e8'
+      self.diagramThemePrimaryBorderColor = undefined
+    }
+  },
   getLocalizedMessage(messagename) {
     return chrome.i18n.getMessage(messagename)
   },
@@ -49,15 +181,20 @@ const diagramPage = {
 
     this.refreshDiagram()
   },
+  setDiagramTheme(themename) {
+    this.themeFuncs[themename](this)
+
+    this.refreshDiagram()
+  },
   diagramSource(noHTMLFlag) {
     return [
       '---',
       'config:',
-      '  theme: base',
+      `  theme: ${this.diagramThemeName}`,
       '  themeVariables:',
-      '    primaryColor: "#ececff"',
-      '    secondaryColor: "#e8e8e8"',
-      `    primaryBorderColor: "${this.diagramPrimaryColor}"`,
+      `    primaryColor: "${this.diagramThemePrimaryColor}"`,
+      `    secondaryColor: "${this.diagramThemeSecondaryColor}"`,
+      this.diagramPrimaryColor && `    primaryBorderColor: "${this.diagramPrimaryColor}"` || '',
       '  flowchart:',
       `    curve: ${this.diagramStyle}`,
       noHTMLFlag && '    htmlLabels: false' || '',
@@ -85,18 +222,28 @@ const diagramPage = {
     this.showElement('openbrancheditor')
     this.hideElement('diagram')
   },
+  sanitiseMermaidSvg(text) {
+    return text.replaceAll('&nbsp;', ' ')
+  },
   createPngBlob(callback) {
     const self = this
 
     mermaid.render('diagramPng', this.diagramSource(true))
       .then((result) => {
-        const b = new Blob([result.svg], { type: 'image/svg+xml' })
+        const cleansvg = this.sanitiseMermaidSvg(result.svg)
+        const b = new Blob(
+          [cleansvg],
+          { type: 'image/svg+xml' }
+        )
 
         if (self.svgBlobUrl) {
           try {
             URL.revokeObjectURL(self.svgBlobUrl)
             self.svgBlobUrl = undefined
-          } catch { }
+          } catch (error) {
+            console.debug('Error in createPngBlob self.svgBlobUrl revoke:', error)
+            window.alert(this.getLocalizedMessage('errCouldNotCompleteOperation'))
+          }
         }
         self.svgBlobUrl = URL.createObjectURL(b)
 
@@ -128,7 +275,10 @@ const diagramPage = {
           })
         })
         img.src = self.svgBlobUrl
-      }).catch(() => { })
+      }).catch((error) => {
+        console.debug('Error in createPngBlob mermaid.render:', error)
+        window.alert(this.getLocalizedMessage('errCouldNotCompleteOperation'))
+      })
   },
   downloadImage(imageUrl) {
     // Create a temporary link, configure it for download,
@@ -143,6 +293,10 @@ const diagramPage = {
     a.href = imageUrl
     a.click()
     a.remove()
+  },
+  colorDropdownChanged(e) {
+    const selectedThemeSetting = e.target.value
+    this.setDiagramTheme(selectedThemeSetting)
   },
   styleDropdownChanged(e) {
     const selectedstyle = e.target.value
@@ -160,7 +314,8 @@ const diagramPage = {
         ])
         window.alert(this.getLocalizedMessage('msgDiagramCopied'))
       } catch (error) {
-        self.setErrorStatus(error)
+        console.debug('Error in copyButtonClicked:', error)
+        window.alert(this.getLocalizedMessage('errCouldNotCompleteOperation'))
       }
     })
   },
@@ -226,7 +381,7 @@ const diagramPage = {
       const self = this
 
       const saveButton = document.getElementById('savebutton')
-      saveButton.addEventListener('click', (e) => {
+      saveButton?.addEventListener('click', (e) => {
         self.saveButtonClicked(e)
       })
 
@@ -236,13 +391,18 @@ const diagramPage = {
       })
 
       const copysourcebutton = document.getElementById('copysourcebutton')
-      copysourcebutton.addEventListener('click', (e) => {
+      copysourcebutton?.addEventListener('click', (e) => {
         self.copySourceButtonClicked(e)
       })
 
       const styledropdown = document.getElementById('styledropdown')
-      styledropdown.addEventListener('change', (e) => {
+      styledropdown?.addEventListener('change', (e) => {
         self.styleDropdownChanged(e)
+      })
+
+      const colordropdown = document.getElementById('colordropdown')
+      colordropdown?.addEventListener('change', (e) => {
+        self.colorDropdownChanged(e)
       })
 
       this.showElement('savepanel')

@@ -13,8 +13,15 @@
   <header>
     <h1 id="diagramtitle">Chargement du diagramme...</h1>
     <div id="savepanel" class="hidden">
-      <div class="dropdown">
-        <select id="styledropdown">
+      <div class="dropdown" title="Choisissez la palette de couleurs">
+        <select id="colordropdown" title="Choisissez la palette de couleurs">
+          <option value="default">Couleurs par défaut</option>
+          <option value="themed">Couleurs du thème</option>
+          <option value="mono">Monochrome</option>
+        </select>
+      </div>
+      <div class="dropdown" title="Choisir le style de dessin">
+        <select id="styledropdown" title="Choisir le style de dessin">
           <option value="basis">Style par défaut</option>
           <option value="linear">Style droit</option>
           <option value="cardinal">Style oblique</option>
@@ -22,14 +29,16 @@
         </select>
       </div>
       <div id="copybutton" title="Copier le diagramme dans le Presse-papier">Copier</div>
-      <div id="copysourcebutton" title="Copier le code source du diagramme dans le Presse-papier">Copier le code source</div>
+      <div id="copysourcebutton" title="Copier le code source du diagramme dans le Presse-papier">Copier le code source
+      </div>
       <div id="savebutton" title="Télécharger le diagramme au format PNG">Enregistrer au format PNG</div>
     </div>
   </header>
   <main>
     <div id="statuspanel" class="statuspanel ">
       <p>Chargement. Veuillez patienter...</p>
-      <p class="animate">N'actualisez pas cette page. Revenez plutôt à la page du formulaire et cliquez à nouveau sur l'extension.</p>
+      <p class="animate">N'actualisez pas cette page. Revenez plutôt à la page du formulaire et cliquez à nouveau sur
+        l'extension.</p>
     </div>
     <div id="openbrancheditor" class="hidden">
       <h2>Options de branche non sélectionnées</h2>

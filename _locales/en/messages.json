@@ -31,6 +31,9 @@
     "errWrongMessage": {
         "message": "Error: Wrong message sent. Please contact the developers."
     },
+    "errCouldNotCompleteOperation" :{
+        "message": "Error: Could not complete operation. Please contact the developers."
+    },
     "msgDiagramCopied": {
         "message": "Diagram copied to clipboard."
     },
