@@ -1,0 +1,43 @@
+{
+    "description": {
+        "message": "إظهار منطق التفريع في نموذج Microsoft Forms كمخطط انسيابي."
+    },
+    "diagramPage": {
+        "message": "diagram-ar.html"
+    },
+    "welcomePage": {
+        "message": "welcome-ar.html"
+    },
+    "nextWord": {
+        "message": "التالي"
+    },
+    "endOfFormPhrase": {
+        "message": "نهاية النموذج"
+    },
+    "defaultSectionTitle": {
+        "message": "عنوان القسم"
+    },
+    "branchingOptions": {
+        "message": "خيارات التفريع"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "ليس في شاشة خيارات التفريع ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "خطأ: تم إرسال رسالة خاطئة. يرجى الاتصال بالمطورين."
+    },
+    "errCouldNotCompleteOperation": {
+        "message": "خطأ: لم يتمكن من إكمال العملية. يرجى الاتصال بالمطورين."
+    },
+    "msgDiagramCopied": {
+        "message": "تم نسخ المخطط إلى الحافظة."
+    },
+    "msgSourceCopied": {
+        "message": "تم نسخ مصدر Mermaid إلى الحافظة."
+    }
+}

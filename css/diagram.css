@@ -6,6 +6,7 @@ body {
     font-family: 'Open Sans', 'Arial', 'Helvetica', sans-serif;
     font-size: 11pt;
     --highlight-color: #1d71b8;
+    direction:  __MSG_@@bidi_dir__;
 }
 
 h1 {
@@ -61,13 +62,14 @@ div.dropdown {
 div.dropdown::after {
     display: inline-block;
     position: absolute;
-    right: 1rem;
     top: 45%;
     content: "";
     border-left: 0.48rem solid transparent;
     border-right: 0.48rem solid transparent;
     border-top: 0.5rem solid white;
     pointer-events: none;
+    /* right: 1rem; */
+    __MSG_@@bidi_end_edge__: 1rem;
 }
 
 div.dropdown select {
@@ -76,11 +78,15 @@ div.dropdown select {
     font-weight: bold;
     background-color: var(--highlight-color);
     position: relative;
-    padding-right: 2rem;
-    padding-left: 0.5rem;
     border: none;
     box-shadow: none;
     cursor: pointer;
+    /*
+    padding-right: 2rem;
+    padding-left: 0.5rem;
+    */
+    padding-__MSG_@@bidi_end_edge__: 2rem;
+    padding-__MSG_@@bidi_start_edge__: 0.5rem;
 }
 
 div.dropdown select:focus, div.dropdown select:current {

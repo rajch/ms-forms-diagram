@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخطط الاستمارات (Forms Diagram)</title>
+    <link rel="stylesheet" href="css/diagram.css">
+</head>
+
+<body>
+    <header>
+        <h1 id="diagramtitle">جارٍ تحميل المخطط...</h1>
+        <div id="savepanel" class="hidden">
+            <div class="dropdown" title="اختيار نظام الألوان">
+                <select id="colordropdown" title="اختيار نظام الألوان">
+                    <option value="default">ألوان افتراضية</option>
+                    <option value="themed">ألوان السمات</option>
+                    <option value="mono">أبيض وأسود</option>
+                </select>
+            </div>
+            <div class="dropdown" title="اختيار نمط الرسم">
+                <select id="styledropdown" title="اختيار نمط الرسم">
+                    <option value="basis">النمط الافتراضي</option>
+                    <option value="linear">نمط مستقيم</option>
+                    <option value="cardinal">نمط متعرج</option>
+                    <option value="stepAfter">نمط المربعات</option>
+                </select>
+            </div>
+            <div id="copysourcebutton" title="نسخ كود مصدر المخطط إلى الحافظة">نسخ الكود</div>
+            <div id="copybutton" title="نسخ المخطط إلى الحافظة">نسخ</div>
+            <div id="savebutton" title="تنزيل المخطط كملف PNG">تنزيل PNG</div>
+        </div>
+    </header>
+    <main>
+        <div id="statuspanel" class="statuspanel ">
+            <p>جارٍ التحميل. يُرجى الانتظار...</p>
+            <p class="animate">لا تقم بتحديث هذه الصفحة. بدلاً من ذلك، ارجع إلى صفحة النموذج وانقر فوق الامتداد مرة أخرى.</p>
+        </div>
+        <div id="openbrancheditor" class="hidden">
+            <h2>لم يتم تحديد خيارات الفرع</h2>
+            <p>قبل استدعاء مخطط النماذج، يرجى فتح شاشة خيارات الفرع عن طريق:</p>
+            <ol>
+                <li>النقر فوق أي سؤال.</li>
+                <li>تحديد "إضافة تفريع" من قائمة النقاط الثلاث.</li>
+            </ol>
+        </div>
+        <pre id="diagram" class="dynmermaid">
+      <svg id="diagramSvg"></svg>
+    </pre>
+    </main>
+
+    <script src="scripts/mermaid.min.js"></script>
+    <script src="scripts/diagram.js"></script>
+</body>
+
+</html>
