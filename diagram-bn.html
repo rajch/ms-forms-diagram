@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফর্মের ডায়াগ্রাম</title>
+    <link rel="stylesheet" href="css/diagram.css">
+    <link rel="stylesheet" href="css/adjust-height-larger.css">
+</head>
+
+<body>
+    <header>
+        <h1 id="diagramtitle">ডায়াগ্রাম লোড হচ্ছে...</h1>
+        <div id="savepanel" class="hidden">
+            <div class="dropdown" title="রঙের স্কিম নির্বাচন করুন">
+                <select id="colordropdown" title="রঙের স্কিম নির্বাচন করুন">
+                    <option value="default">ডিফল্ট রঙ</option>
+                    <option value="themed">থিম রঙ</option>
+                    <option value="mono">মনোক্রোম</option>
+                </select>
+            </div>
+            <div class="dropdown" title="অঙ্কন শৈলী নির্বাচন করুন">
+                <select id="styledropdown" title="অঙ্কন শৈলী নির্বাচন করুন">
+                    <option value="basis">ডিফল্ট শৈলী</option>
+                    <option value="linear">সোজা শৈলী</option>
+                    <option value="cardinal">বাঁকা শৈলী</option>
+                    <option value="stepAfter">বাক্স শৈলী</option>
+                </select>
+            </div>
+            <div id="copysourcebutton" title="ক্লিপবোর্ডে ডায়াগ্রামের উৎস কোড কপি করুন">কোড কপি করুন</div>
+            <div id="copybutton" title="ক্লিপবোর্ডে ডায়াগ্রাম কপি করুন">কপি করুন</div>
+            <div id="savebutton" title="PNG ফাইল হিসাবে ডায়াগ্রাম ডাউনলোড করুন">PNG ডাউনলোড করুন</div>
+        </div>
+    </header>
+    <main>
+        <div id="statuspanel" class="statuspanel ">
+            <p>লোড হচ্ছে। দয়া করে অপেক্ষা করুন...</p>
+            <p class="animate">এই পৃষ্ঠাটি রিফ্রেশ করবেন না। এর পরিবর্তে, ফর্ম পৃষ্ঠায় ফিরে যান এবং আবার এক্সটেনশানটি
+                ক্লিক করুন।</p>
+        </div>
+        <div id="openbrancheditor" class="hidden">
+            <h2>ব্রাঞ্চিং বিকল্পসমূহ নির্বাচিত নেই</h2>
+            <p>ফর্ম ডায়াগ্রাম চালানোর আগে, নিম্নলিখিতভাবে ব্রাঞ্চিং বিকল্পসমূহ স্ক্রীনটি খুলুন:</p>
+            <ol>
+                <li><em>যেকোনো</em> প্রশ্নে ক্লিক করুন।</li>
+                <li>এলিপসিস মেনু থেকে "ব্রাঞ্চিং যুক্ত করুন" নির্বাচন করুন।</li>
+            </ol>
+        </div>
+        <pre id="diagram" class="dynmermaid">
+      <svg id="diagramSvg"></svg>
+    </pre>
+    </main>
+
+    <script src="scripts/mermaid.min.js"></script>
+    <script src="scripts/diagram.js"></script>
+</body>
+
+</html>

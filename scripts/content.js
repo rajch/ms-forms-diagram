@@ -10,6 +10,23 @@
     return (value === getLocalized(messagename))
   }
 
+
+  function localizedQNumRegExp () {
+    // A question or section title is a number, followed by a separator
+    // and then the title text. The separator is usually a ".", but may
+    // be different in locales, such as Bangla (bn).
+    const sep = getLocalized('periodSeparator')
+    if (sep && sep !== '.') {
+      return new RegExp(`^(\\d{1,5})[\\.${sep}](.*)$`)
+    }
+    return /^(\d{1,5})\.(.*)$/
+  }
+
+  function globalizePeriodSeparator (text) {
+    const sep = getLocalized('periodSeparator')
+    return text.replaceAll(sep, '.')
+  }
+
   // The form can be reduced to a data structure, from which a mermaid
   // diagram can be generated. A form is made up of multiple questions
   // or multiple sections, each section having multiple questions. A
@@ -24,7 +41,11 @@
   // <number>.
   // if the section does not have a title.
   // This regexp matches both cases.
-  const qnumregexp = /^(\d{1,5})\.(.*)$/
+  //     /^(\d{1,5})\.(.*)$/
+  // It needs to be localized, because in some languages like Bangla,
+  // a different separator may be used instead of "." in the patterns
+  // above.
+  const qnumregexp = localizedQNumRegExp()
 
   // Strings in mermaid, if they contain special characters, should be
   // enclosed in double quotes, with any actual double quotes encoded.
@@ -89,6 +110,7 @@
 
     return {
       getSectionId (sectionTitle) {
+        sectionTitle = globalizePeriodSeparator(sectionTitle)
         let result = ''
         if (scount) {
           const sec = sections.find((s) => sectionTitle === s.title())

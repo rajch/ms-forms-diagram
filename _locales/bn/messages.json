@@ -1,0 +1,46 @@
+{
+    "description": {
+        "message": "মাইক্রোসফ্ট ফর্মস ফর্মের ব্রাঞ্চিং লজিক ফ্লোচার্ট ডায়াগ্রাম হিসাবে দেখান।"
+    },
+    "diagramPage": {
+        "message": "diagram-bn.html"
+    },
+    "welcomePage": {
+        "message": "welcome-bn.html"
+    },
+    "nextWord": {
+        "message": "পরবর্তী"
+    },
+    "endOfFormPhrase": {
+        "message": "ফর্মের শেষে"
+    },
+    "defaultSectionTitle": {
+        "message": "বিভাগের শিরোনাম"
+    },
+    "branchingOptions": {
+        "message": "ব্রাঞ্চিং বিকল্পসমূহ"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "ব্রাঞ্চিং বিকল্পসমূহ স্ক্রীনে নেই ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "ত্রুটি: ভুল বার্তা পাঠানো হয়েছে। দয়া করে উন্নয়নকারীদের সাথে যোগাযোগ করুন।"
+    },
+    "errCouldNotCompleteOperation": {
+        "message": "ত্রুটি: অপারেশন সম্পন্ন করা যায়নি। দয়া করে উন্নয়নকারীদের সাথে যোগাযোগ করুন।"
+    },
+    "msgDiagramCopied": {
+        "message": "ডায়াগ্রাম ক্লিপবোর্ডে কপি করা হয়েছে।"
+    },
+    "msgSourceCopied": {
+        "message": "মারমেইড সোর্স ক্লিপবোর্ডে কপি করা হয়েছে।"
+    },
+    "periodSeparator": {
+        "message": "।"
+    }
+}
