@@ -1,0 +1,43 @@
+{
+    "description": {
+        "message": "Mostrar la lógica de bifurcación en un formulario de Microsoft Forms como un diagrama de flujo."
+    },
+    "diagramPage": {
+        "message": "diagram-es.html"
+    },
+    "welcomePage": {
+        "message": "welcome-es.html"
+    },
+    "nextWord": {
+        "message": "Siguiente"
+    },
+    "endOfFormPhrase": {
+        "message": "Fin del formulario"
+    },
+    "defaultSectionTitle": {
+        "message": "Título de la sección"
+    },
+    "branchingOptions": {
+        "message": "Opciones de ramificación"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "No se encuentra en la pantalla Opciones de bifurcación ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "Error: Se envió un mensaje incorrecto. Comuníquese con los desarrolladores."
+    },
+    "errCouldNotCompleteOperation": {
+        "message": "Error: No se pudo completar la operación. Comuníquese con los desarrolladores."
+    },
+    "msgDiagramCopied": {
+        "message": "Diagrama copiado al portapapeles."
+    },
+    "msgSourceCopied": {
+        "message": "Código fuente de Mermaid copiado al portapapeles."
+    }
+}

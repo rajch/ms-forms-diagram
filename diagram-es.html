@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de formularios</title>
+    <link rel="stylesheet" href="css/diagram.css">
+</head>
+
+<body>
+    <header>
+        <h1><span id="diagramtitle">Diagrama cargando...</span></h1>
+        <div id="savepanel" class="hidden">
+            <div class="dropdown" title="Elegir esquema de color">
+                <select id="colordropdown" title="Elegir esquema de color">
+                    <option value="default">Colores predeterminados</option>
+                    <option value="themed">Colores temáticos</option>
+                    <option value="mono">Monocromo</option>
+                </select>
+            </div>
+            <div class="dropdown" title="Elegir estilo de dibujo">
+                <select id="styledropdown" title="Elegir estilo de dibujo">
+                    <option value="basis">Estilo predeterminado</option>
+                    <option value="linear">Estilo recto</option>
+                    <option value="cardinal">Estilo inclinado</option>
+                    <option value="stepAfter">Estilo con recuadro</option>
+                </select>
+            </div>
+            <div id="copysourcebutton" title="Copiar código fuente del diagrama al portapapeles">Copiar código</div>
+            <div id="copybutton" title="Copiar diagrama al portapapeles">Copiar</div>
+            <div id="savebutton" title="Descargar diagrama como archivo PNG">Descargar PNG</div>
+        </div>
+    </header>
+    <main>
+        <div id="statuspanel" class="statuspanel ">
+            <p>Cargando. Por favor espera...</p>
+            <p class="animate">No actualices esta página. En su lugar, vuelve a la página del formulario y haz clic de
+                nuevo en la extensión.</p>
+        </div>
+        <div id="openbrancheditor" class="hidden">
+            <h2>Opciones de ramificación no seleccionadas</h2>
+            <p>Antes de invocar el Diagrama de formularios, abre la pantalla de Opciones de ramificación mediante:</p>
+            <ol>
+                <li>Haciendo clic en cualquier pregunta.</li>
+                <li>Seleccionando "Agregar ramificación" en el menú de puntos suspensivos.</li>
+            </ol>
+        </div>
+        <pre id="diagram" class="dynmermaid">
+      <svg id="diagramSvg"></svg>
+    </pre>
+    </main>
+
+    <script src="scripts/mermaid.min.js"></script>
+    <script src="scripts/diagram.js"></script>
+</body>
+
+</html>
