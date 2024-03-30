@@ -1,0 +1,13 @@
+h2+p {
+    padding-inline-start: 40px;
+}
+
+li {
+    line-height: 1.1rem;
+}
+
+li img {
+    vertical-align: middle;
+    padding: 4px;
+    background-color: #f6f5f4;
+}
