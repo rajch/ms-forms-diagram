@@ -125,7 +125,7 @@ const diagramPage = {
     default (self) {
       self.diagramThemeName = 'base'
       self.diagramThemePrimaryColor = '#ececff'
-      self.diagramThemeSecondaryColor = '#e8e8e8'
+      self.diagramThemeSecondaryColor = '#ffffff'
       self.diagramThemePrimaryBorderColor = self.diagramPrimaryColor
     },
     themed (self) {
