@@ -1,0 +1,46 @@
+{
+    "description": {
+        "message": "Microsoft Forms फ़ॉर्म में ब्रांच लॉजिक को फ़्लोचार्ट आरेख के रूप में दिखाएं।"
+    },
+    "diagramPage": {
+        "message": "diagram-hi.html"
+    },
+    "welcomePage" : {
+        "message": "welcome-hi.html"
+    },
+    "nextWord": {
+        "message": "अगला"
+    },
+    "endOfFormPhrase": {
+        "message": "प्रपत्र की समाप्ति"
+    },
+    "defaultSectionTitle": {
+        "message": "अनुभाग शीर्षक"
+    },
+    "branchingOptions": {
+        "message": "ब्रांचिंग विकल्प"
+    },
+    "errNotOnBranchingOptions": {
+        "message": "ब्रांचिंग विकल्प स्क्रीन पर नहीं ($checkNumber$)",
+        "placeholders": {
+            "checkNumber": {
+                "content": "$1"
+            }
+        }
+    },
+    "errWrongMessage": {
+        "message": "त्रुटि: गलत संदेश भेजा गया। कृपया डेवलपर्स से संपर्क करें।"
+    },
+    "errCouldNotCompleteOperation" :{
+        "message": "त्रुटि: कार्रवाई पूरी नहीं हो सकी। कृपया डेवलपर्स से संपर्क करें।"
+    },
+    "msgDiagramCopied": {
+        "message": "आरेख क्लिपबोर्ड पर कॉपी किया गया है।"
+    },
+    "msgSourceCopied": {
+        "message": "मरमेड सोर्स क्लिपबोर्ड पर कॉपी किया गया है।"
+    },
+    "periodSeparator": {
+        "message": "."
+    }
+}

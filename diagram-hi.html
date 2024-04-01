@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>फ़ॉर्म आरेख</title>
+    <link rel="stylesheet" href="css/diagram.css">
+    <link rel="stylesheet" href="css/adjust-height-larger.css">
+</head>
+
+<body>
+    <header>
+        <h1 id="diagramtitle">आरेख लोड हो रहा है...</h1>
+        <div id="savepanel" class="hidden">
+            <div class="dropdown" title="रंग योजना चुनें">
+                <select id="colordropdown" title="रंग योजना चुनें">
+                    <option value="default">डिफ़ॉल्ट रंग</option>
+                    <option value="themed" >थीम रंग</option>
+                    <option value="mono"   >मोनोक्रोम</option>
+                </select>
+            </div>
+            <div class="dropdown" title="ड्राइंग शैली चुनें">
+                <select id="styledropdown" title="ड्राइंग शैली चुनें">
+                    <option value="basis"    >डिफ़ॉल्ट शैली</option>
+                    <option value="linear"   >सीधी रेखा शैली</option>
+                    <option value="cardinal" >टेढ़ी रेखा शैली</option>
+                    <option value="stepAfter">बॉक्स शैली</option>
+                </select>
+            </div>
+            <div id="copysourcebutton" title="क्लिपबोर्ड पर आरेख स्रोत कोड कॉपी करें">कोड कॉपी करें</div>
+            <div id="copybutton" title="क्लिपबोर्ड पर आरेख कॉपी करें">कॉपी करें</div>
+            <div id="savebutton" title="आरेख को PNG फ़ाइल के रूप में डाउनलोड करें">PNG डाउनलोड करें</div>
+        </div>
+    </header>
+    <main>
+        <div id="statuspanel" class="statuspanel ">
+            <p>लोड हो रहा है। कृपया प्रतीक्षा करें...</p>
+            <p class="animate">इस पृष्ठ को रिफ्रेश न करें। इसके बजाय, फ़ॉर्म पृष्ठ पर वापस जाएं और फिर से एक्सटेंशन पर क्लिक करें।</p>
+        </div>
+        <div id="openbrancheditor" class="hidden">
+            <h2>शाखा विकल्प नहीं चुने गए</h2>
+            <p>फ़ॉर्म आरेख का आह्वान करने से पहले, कृपया शाखा विकल्प स्क्रीन को खोलें:</p>
+            <ol>
+                <li><em>किसी भी</em> प्रश्न पर क्लिक करना।</li>
+                <li>अंडाकार मेनू से "शाखा जोड़ें" का चयन करना।</li>
+            </ol>
+        </div>
+        <pre id="diagram" class="dynmermaid">
+            <svg id="diagramSvg"></svg>
+        </pre>
+    </main>
+
+    <script src="scripts/mermaid.min.js"></script>
+    <script src="scripts/diagram.js"></script>
+</body>
+
+</html>
