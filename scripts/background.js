@@ -102,7 +102,15 @@ chrome.action.onClicked.addListener(
         },
         function executeScriptCallback (injectionresults) {
           for (const injectionresult of injectionresults) {
-            console.log(injectionresult.result)
+            const result = injectionresult.result 
+                            ?? { 
+                                 status: 'Error',
+                                 error: chrome.i18n.getMessage("errWrongMessage")
+                               }
+
+            result.locale = chrome.i18n.getUILanguage()
+            console.log(result)
+            
 
             const pagename = chrome.i18n.getMessage('diagramPage')
             chrome.tabs.create(

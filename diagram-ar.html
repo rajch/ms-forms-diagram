@@ -37,7 +37,8 @@
     <main>
         <div id="statuspanel" class="statuspanel ">
             <p>جارٍ التحميل. يُرجى الانتظار...</p>
-            <p class="animate">لا تقم بتحديث هذه الصفحة. بدلاً من ذلك، ارجع إلى صفحة النموذج وانقر فوق الامتداد مرة أخرى.</p>
+            <p class="animate">لا تقم بتحديث هذه الصفحة. بدلاً من ذلك، ارجع إلى صفحة النموذج وانقر فوق الامتداد مرة
+                أخرى.</p>
         </div>
         <div id="openbrancheditor" class="hidden">
             <h2>لم يتم تحديد خيارات الفرع</h2>
@@ -47,9 +48,14 @@
                 <li>تحديد "إضافة تفريع" من قائمة النقاط الثلاث.</li>
             </ol>
         </div>
+        <div id="unexpectederrorpanel" class="hidden">
+            <h2>حدث خطأ غير متوقع</h2>
+            <p>نحن نعتذر عن الإزعاج. يرجى الاتصال بالمطورين بالمعلومات أدناه</p>
+            <pre id="unexpectederrordetails"></pre>
+        </div>
         <pre id="diagram" class="dynmermaid">
-      <svg id="diagramSvg"></svg>
-    </pre>
+            <svg id="diagramSvg"></svg>
+        </pre>
     </main>
 
     <script src="scripts/mermaid.min.js"></script>

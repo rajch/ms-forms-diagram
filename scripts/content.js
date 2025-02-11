@@ -118,16 +118,17 @@
         }
         return result
       },
-      getSectionDestination (question) {
-        if (!question.section()) {
-          return this.getNextQuestion(question)
+      getSectionDestination (section) {
+        const secdest = section.destinationString()
+
+        // / if (secdest === 'End of the form') {
+        if (compareLocalizedEqual('endOfFormPhrase', secdest)) {
+          return 'End'
         }
 
-        const sec = question.section()
-        const secdest = sec.destinationString()
         // / if (secdest === 'Next') {
         if (compareLocalizedEqual('nextWord', secdest)) {
-          const destsecordinal = sec.ordinal() + 1
+          const destsecordinal = section.ordinal() + 1
           if (destsecordinal > scount) {
             return 'End'
           } else {
@@ -137,13 +138,21 @@
 
         return this.getSectionId(secdest)
       },
+      getSectionDestinationForQuestion (question) {
+        if (!question.section()) {
+          return this.getNextQuestion(question)
+        }
+
+        const sec = question.section()
+        return this.getSectionDestination(sec)
+      },
       getNextQuestion (question) {
         const toNum = parseInt(question.id()) + 1
         return toNum > qcount ? 'End' : toNum.toString()
       },
       getNextDestination (question) {
         if (question.isLastInSection()) {
-          return this.getSectionDestination(question)
+          return this.getSectionDestinationForQuestion(question)
         } else {
           return this.getNextQuestion(question)
         }
@@ -209,8 +218,15 @@
         let result = ''
 
         const sec = section
-        result += `${sec.id()}{{${sec.titleText()}}}\n`
-        result += `${sec.id()} --> ${sec.firstQuestionId()}\n`
+        const title = sec.titleText()
+          ? sec.titleText()
+          : `Section ${sec.id()}`
+        const destination = sec.firstQuestionId()
+          ? sec.firstQuestionId()
+          : this.getSectionDestination(sec)
+
+        result += `${sec.id()}{{${title}}}\n`
+        result += `${sec.id()} --> ${destination}\n`
 
         sec.questions.forEach((q) => {
           result += this.processQuestion(q)
@@ -521,28 +537,35 @@
   if (!headingSpan) {
     // / finalresult.error = 'Not on Branching Options screen (check 1)'
     finalresult.error = getLocalized('errNotOnBranchingOptions', 'check 1')
+    finalresult.notOnBrachingScreen = true
     return finalresult
   }
 
   // / if (headingSpan.innerText !== 'Branching options') {
   if (!compareLocalizedEqual('branchingOptions', headingSpan.innerText)) {
     finalresult.error = getLocalized('errNotOnBranchingOptions', 'check 2')
+    finalresult.notOnBrachingScreen = true
     return finalresult
   }
 
-  const f = parseForm()
-  const result = f.process()
+  try {
+    const f = parseForm()
+    const result = f.process()
 
-  // Log result for debugging
-  console.log('LOGGING FROM content.js:\n' + result)
+    // Log result for debugging
+    console.log('LOGGING FROM content.js:\n' + result)
 
-  finalresult.status = 'Success'
-  finalresult.diagramTitle = document.title
-  finalresult.diagramText = result
+    finalresult.status = 'Success'
+    finalresult.diagramTitle = document.title
+    finalresult.diagramText = result
 
-  // Fetch and pass theme information
-  const bodyStyles = getComputedStyle(document.body)
-  finalresult.themePrimaryColor = bodyStyles.getPropertyValue('--palette-form-primary')
+    // Fetch and pass theme information
+    const bodyStyles = getComputedStyle(document.body)
+    finalresult.themePrimaryColor = bodyStyles.getPropertyValue('--palette-form-primary')
+  } catch (e) {
+    finalresult.status = 'Error'
+    finalresult.error = 'Unexpected error: ' + e.message
+  }
 
   return finalresult
 })()

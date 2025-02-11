@@ -236,6 +236,16 @@ const diagramPage = {
     this.showElement('openbrancheditor')
     this.hideElement('diagram')
   },
+  showUnexpectedErrorPanel(details) {
+    if(details) {
+      this.setElementText(
+        'unexpectederrordetails',
+        JSON.stringify(details, undefined , 2)
+      )
+    }
+    this.showElement('unexpectederrorpanel')
+    this.hideElement('diagram')
+  },
   sanitiseMermaidSvg (text) {
     return text.replaceAll('&nbsp;', ' ')
   },
@@ -365,8 +375,13 @@ const diagramPage = {
     }
 
     if (request.status === 'Error') {
-      this.setErrorStatus('Error: ' + request.error)
-      this.showOpenBranchEditorPanel()
+      //this.setErrorStatus('Error: ' + request.error + '<br />Please contact the developers');
+      this.setErrorStatus('')
+      if(request.notOnBranchingScreen) {
+        this.showOpenBranchEditorPanel()
+      } else {
+        this.showUnexpectedErrorPanel({ message: request.error, locale: request.locale })
+      }
       return
     }
 
