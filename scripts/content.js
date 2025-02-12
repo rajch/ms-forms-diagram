@@ -2,6 +2,9 @@
 (function () {
   'use strict'
 
+  const unLocalizedNextWord = "Next"
+  const unLocalizedEndOfFormPhrase = "End of the form"
+
   function getLocalized (messagename, substitutions) {
     return chrome.i18n.getMessage(messagename, substitutions)
   }
@@ -122,12 +125,18 @@
         const secdest = section.destinationString()
 
         // / if (secdest === 'End of the form') {
-        if (compareLocalizedEqual('endOfFormPhrase', secdest)) {
+        if (
+          secdest === unLocalizedEndOfFormPhrase ||
+          compareLocalizedEqual('endOfFormPhrase', secdest)
+        ) {
           return 'End'
         }
 
         // / if (secdest === 'Next') {
-        if (compareLocalizedEqual('nextWord', secdest)) {
+        if (
+          secdest === unLocalizedNextWord ||
+          compareLocalizedEqual('nextWord', secdest)
+        ) {
           const destsecordinal = section.ordinal() + 1
           if (destsecordinal > scount) {
             return 'End'
@@ -164,12 +173,18 @@
         }
 
         // / if (gotoValue === 'Next') {
-        if (compareLocalizedEqual('nextWord', gotoValue)) {
+        if (
+          gotoValue === unLocalizedNextWord ||
+          compareLocalizedEqual('nextWord', gotoValue)
+        ) {
           return this.getNextDestination(question)
         }
 
         // / if (gotoValue === 'End of the form') {
-        if (compareLocalizedEqual('endOfFormPhrase', gotoValue)) {
+        if (
+          gotoValue === unLocalizedEndOfFormPhrase ||
+          compareLocalizedEqual('endOfFormPhrase', gotoValue)
+        ) {
           return 'End'
         }
 
@@ -201,7 +216,9 @@
             const destId = thisForm.getDestinationId(
               choice.destinationString(), question
             )
-
+            if (!destId) {
+              console.error("ARRE NO DESTINATION MCQ:", destId, question)
+            }
             result += `${qId} -->|${choiceTitle}|${destId}\n`
           })
         } else {
@@ -209,6 +226,9 @@
             question.destinationString(), question
           )
 
+          if (!destId) {
+            console.error("ARRE NO DESTINATION Q:", destId, question.destinationString(), question.titleText(), question.isLastInSection())
+          }
           result += `${qId}[${qTitle}] --> ${destId}\n`
         }
 
@@ -542,11 +562,11 @@
   }
 
   // / if (headingSpan.innerText !== 'Branching options') {
-  if (!compareLocalizedEqual('branchingOptions', headingSpan.innerText)) {
-    finalresult.error = getLocalized('errNotOnBranchingOptions', 'check 2')
-    finalresult.notOnBrachingScreen = true
-    return finalresult
-  }
+  // if (!compareLocalizedEqual('branchingOptions', headingSpan.innerText)) {
+  //   finalresult.error = getLocalized('errNotOnBranchingOptions', 'check 2')
+  //   finalresult.notOnBrachingScreen = true
+  //   return finalresult
+  // }
 
   try {
     const f = parseForm()
