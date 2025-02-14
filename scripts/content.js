@@ -20,9 +20,9 @@
     // be different in locales, such as Bangla (bn).
     const sep = getLocalized('periodSeparator')
     if (sep && sep !== '.') {
-      return new RegExp(`^(\\d{1,5})[\\.${sep}](.*)$`)
+      return new RegExp(`^(\\d+)[\\.${sep}]`)
     }
-    return /^(\d{1,5})\.(.*)$/
+    return /^(\d+)\./
   }
 
   function globalizePeriodSeparator (text) {
@@ -207,7 +207,7 @@
         const qTitle = question.titleText()
 
         if (question.multipleBranches()) {
-          result += `${qId}[${qTitle}]\n`
+          result += `${qId}["${qTitle}"]\n`
 
           const choices = question.choices
 
@@ -245,7 +245,7 @@
           ? sec.firstQuestionId()
           : this.getSectionDestination(sec)
 
-        result += `${sec.id()}{{${title}}}\n`
+        result += `${sec.id()}{{"${title}"}}\n`
         result += `${sec.id()} --> ${destination}\n`
 
         sec.questions.forEach((q) => {

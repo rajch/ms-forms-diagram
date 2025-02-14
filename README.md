@@ -30,3 +30,4 @@ Mr. Nisar Ahmed Barwelkar helped with Arabic localization.
 
 Other localizations were provided by Google Gemini.
 
+Many thanks to Mr. Adrian Barsby, who helped identify a nasty bug with section names, and was very patient with us while it was resolved.
